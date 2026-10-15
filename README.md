@@ -1,13 +1,19 @@
-# Vorn connectors
+# Vorn extensions
 
-A connector is how a [Vorn](https://github.com/vorn-run/vorn) workflow reaches
+Every first-party extension of [Vorn](https://github.com/vorn-run/vorn), each in
+a folder of its own at the top of this repository. Vorn installs one from its
+folder: `vorn ext install https://github.com/vorn-run/extensions.git`, with the
+folder's name as the path, which is what the catalog names for each.
+
+The extensions here today are connectors. A connector is how a [Vorn](https://github.com/vorn-run/vorn) workflow reaches
 outside itself. It watches a system for something happening — a work item moving
 into a state, a query starting to return rows — and starts a workflow run when it
 does. Some connectors also expose actions a workflow step can call back out to.
 
-Each connector is a separate npm package. Vorn launches one on demand with
-`npx -y <package>`, so a connector is never bundled into the app and ships on its
-own schedule: a fix to a query reaches you without waiting for an app release.
+Each connector's folder holds its sources and what Vorn runs from it: its
+`vorn-extension.toml`, one bundled `index.js` and the receipt of its checks,
+`verified.json`. A connector is never bundled into the app and ships on its own
+schedule: a fix to a query reaches you without waiting for an app release.
 
 ## Available connectors
 
@@ -55,11 +61,16 @@ and timestamp if they are not called `Id` and `Timestamp`.
 ## Layout
 
 ```
-packages/<name>/     one npm package per connector
+<id>/                one extension: its sources, vorn-extension.toml, index.js, verified.json
 templates/           workflows a new workflow can start from
 catalog.json         the list the app offers under Connections → Add
-scripts/             repository checks run in CI
+scripts/             the builds and the checks CI runs
 ```
+
+`node scripts/build-extensions.mjs` writes each folder's `vorn-extension.toml`
+and `index.js` from its built package; `--check` says when a committed one is
+stale. The hosts a connector reaches are declared in its `package.json` under
+`"vorn"`: `"hosts"`, and `"hostsFrom"` for settings whose addresses are hosts.
 
 `catalog.json` is generated from the connectors themselves — each one's id,
 icon, triggers, actions and the settings it will ask for come out of its own
@@ -144,8 +155,9 @@ test can poll it and assert on real items without spawning anything.
 
 ## Adding a connector
 
-Add `packages/<id>/`, then run `yarn build && node scripts/build-catalog.mjs` to
-put it in the catalog. Anything the manifest has no opinion about — the category
+Add `<id>/`, name it in the root `package.json`'s workspaces, then run
+`yarn build && node scripts/build-extensions.mjs <id> && node scripts/build-catalog.mjs`
+to put it in the catalog. Anything the manifest has no opinion about — the category
 it lists under, the words people will search for, one line on how it signs in —
 goes in that package's `package.json` under `"vorn"`.
 

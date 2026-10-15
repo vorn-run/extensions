@@ -27,8 +27,8 @@ jobs:
         run: |
           name="${GITHUB_REF_NAME%%-v*}"
           version="${GITHUB_REF_NAME##*-v}"
-          echo "dir=packages/$name" >> "$GITHUB_OUTPUT"
-          echo "workspace=$(node -p "require('./packages/$name/package.json').name")" >> "$GITHUB_OUTPUT"
+          echo "dir=$name" >> "$GITHUB_OUTPUT"
+          echo "workspace=$(node -p "require('./$name/package.json').name")" >> "$GITHUB_OUTPUT"
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "Publishing $name@$version"
 
@@ -47,9 +47,9 @@ jobs:
       #
       # `yarn build` comes before the catalog check on purpose: that check
       # imports each package's built dist/ to read its manifest, so on a fresh
-      # checkout it fails with "packages/ado is not built" rather than telling
+      # checkout it fails with "ado is not built" rather than telling
       # you anything about the catalog. Every workspace is built, not just the
-      # one being released, because the check reads all five.
+      # one being released, because the check reads all of them.
       - run: yarn typecheck
       - run: yarn workspace ${{ steps.pkg.outputs.workspace }} run test
       - run: yarn build

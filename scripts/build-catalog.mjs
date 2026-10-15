@@ -15,6 +15,7 @@
  *
  * Run with --check to verify the committed file matches, which is what CI does.
  */
+import { extensionDirs } from './extensions.mjs'
 import { readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs'
 import { pathToFileURL } from 'node:url'
 import { resolve } from 'node:path'
@@ -24,10 +25,16 @@ import { catalogEntry, readTemplateFiles } from './templates.mjs'
 const CATALOG_VERSION = 1
 /** Written by `yarn conformance`, committed, and quoted here as the verified badge. */
 const RECEIPT_FILE = 'verified.json'
-/** Where a release carries a connector's pack, under the tag that published it. */
+/** The repository Vorn installs a connector from, and the folder `build-extensions.mjs` writes it to. */
+const GIT_URL = 'https://github.com/vorn-run/extensions.git'
+const FOLDER = (id) => id
+/**
+ * Where a release carries the 0.8 pack of a version, under the tag that
+ * published it. Kept while Vorn releases that install from packUrl are still
+ * in use; a Vorn that installs from git reads git and path instead.
+ */
 const PACK_URL = (dir, id, version) =>
-  `https://github.com/vorn-run/connectors/releases/download/` +
-  `${dir}-v${version}/${id}-${version}.vorn.tgz`
+  `https://github.com/vorn-run/extensions/releases/download/${dir}-v${version}/${id}-${version}.vorn.tgz`
 
 /** Trim an action's inputs down to what someone deciding would want to see. */
 function summarize(entries) {
@@ -60,7 +67,7 @@ function requiredEnv(manifest) {
 
 /** A connector's conformance receipt, if it has been run and committed. */
 function receiptFor(dir) {
-  const path = `packages/${dir}/${RECEIPT_FILE}`
+  const path = `${dir}/${RECEIPT_FILE}`
   if (!existsSync(path)) return undefined
   const receipt = JSON.parse(readFileSync(path, 'utf8'))
   return {
@@ -72,17 +79,17 @@ function receiptFor(dir) {
 }
 
 async function entryFor(dir) {
-  const pkg = JSON.parse(readFileSync(`packages/${dir}/package.json`, 'utf8'))
-  const built = resolve(`packages/${dir}/dist/index.js`)
+  const pkg = JSON.parse(readFileSync(`${dir}/package.json`, 'utf8'))
+  const built = resolve(`${dir}/dist/index.js`)
   if (!existsSync(built)) {
-    throw new Error(`packages/${dir} is not built — run \`yarn build\` first`)
+    throw new Error(`${dir} is not built — run \`yarn build\` first`)
   }
 
   const module = await import(pathToFileURL(built).href)
   const connector = Object.values(module).find(
     (value) => value && typeof value === 'object' && 'id' in value && 'triggers' in value
   )
-  if (!connector) throw new Error(`packages/${dir} exports no connector`)
+  if (!connector) throw new Error(`${dir} exports no connector`)
 
   const manifest = connectorManifest(connector)
   const listing = pkg.vorn ?? {}
@@ -105,21 +112,24 @@ async function entryFor(dir) {
     // The rung the connector itself declares; the line above is the prose for it.
     ...(manifest.auth?.rung && { authRung: manifest.auth.rung }),
     ...(receipt && { verified: receipt }),
-    // Only where the release actually carries the asset: the app prefers this
-    // over the package name, so advertising one that is not there yet would
-    // turn an install that works into a download that 404s.
-    ...(listing.packs && { packUrl: PACK_URL(dir, manifest.id, pkg.version) }),
+    // Only where the folder is committed: advertising one that is not there
+    // would turn an install into a clone that finds nothing.
+    ...(existsSync(`${FOLDER(manifest.id)}/vorn-extension.toml`) && {
+      git: GIT_URL,
+      path: FOLDER(manifest.id)
+    }),
+    packUrl: PACK_URL(dir, manifest.id, pkg.version),
     ...(manifest.icon && { icon: manifest.icon }),
     triggers: summarize(manifest.triggers),
     actions: summarize(manifest.actions),
-    env: requiredEnv(manifest)
+    env: requiredEnv(manifest),
+    // What it reaches, so the catalog can say so before anything is installed.
+    ...(listing.hosts && { hosts: listing.hosts }),
+    ...(listing.hostsFrom && { hostsFrom: listing.hostsFrom })
   }
 }
 
-const dirs = readdirSync('packages', { withFileTypes: true })
-  .filter((entry) => entry.isDirectory())
-  .map((entry) => entry.name)
-  .sort()
+const dirs = extensionDirs()
 
 const connectors = []
 for (const dir of dirs) connectors.push(await entryFor(dir))

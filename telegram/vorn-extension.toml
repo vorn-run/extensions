@@ -1,0 +1,97 @@
+id = "telegram"
+name = "Telegram"
+version = "0.1.1"
+api = "vorn:extension@0.9"
+publisher = "Vorn"
+description = "Trigger workflows from Telegram messages, and send, reply or edit from a step."
+
+[icon]
+view_box = "0 0 24 24"
+paths = ["M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"]
+
+[service]
+command = ["node", "index.js"]
+
+[checks]
+command = ["node", "index.js", "--check"]
+
+[declares]
+network = ["api.telegram.org"]
+
+[connector]
+
+[connector.auth]
+rung = "key"
+keys = ["token"]
+
+[[connector.triggers]]
+type = "messageReceived"
+label = "A message arrives"
+description = "Fires for each new or edited message the bot can see. Telegram deletes unread updates after 24 hours and has no history endpoint, so this sees nothing sent before the connection was made."
+status_mapping = [{ upstream = "received", suggested_local = "todo" }, { upstream = "edited", suggested_local = "todo" }]
+default_workflow = { name = "Telegram: messages", default_cron_from_minutes = 1 }
+
+[[connector.actions]]
+type = "sendMessage"
+label = "Send a message"
+description = "Post a message to a chat the bot is in."
+outputs = [{ key = "messageId", description = "Id of the message, unique within its chat" }, { key = "chatId", description = "The chat it landed in" }]
+
+[[connector.actions.inputs]]
+key = "text"
+label = "Message"
+required = true
+description = "The text to post. Telegram refuses an empty message."
+
+[[connector.actions.inputs]]
+key = "chatId"
+label = "Chat"
+description = "Defaults to the connection’s chat."
+
+[[connector.actions]]
+type = "replyToMessage"
+label = "Reply to a message"
+description = "Post a message as a reply, so it threads under the original."
+outputs = [{ key = "messageId", description = "Id of the reply" }, { key = "chatId", description = "The chat it landed in" }]
+
+[[connector.actions.inputs]]
+key = "messageId"
+label = "Message to reply to"
+type = "number"
+required = true
+description = "From {{trigger.item.messageId}}."
+
+[[connector.actions.inputs]]
+key = "text"
+label = "Message"
+required = true
+description = "The reply text. Telegram refuses an empty message."
+
+[[connector.actions.inputs]]
+key = "chatId"
+label = "Chat"
+description = "Defaults to the connection’s chat. Must be the message’s own chat."
+
+[[connector.actions]]
+type = "editMessageText"
+label = "Edit a message"
+description = "Replace the text of a message this bot sent."
+outputs = [{ key = "messageId", description = "Id of the edited message" }, { key = "chatId", description = "The chat it is in" }, { key = "changed", description = "false when the message already had this text" }]
+
+[[connector.actions.inputs]]
+key = "messageId"
+label = "Message to edit"
+type = "number"
+required = true
+description = "From {{steps.sendMessage.messageId}}."
+
+[[connector.actions.inputs]]
+key = "text"
+label = "New text"
+required = true
+description = "Replaces the message in full; Telegram has no partial edit."
+
+[[connector.actions.inputs]]
+key = "chatId"
+label = "Chat"
+description = "Defaults to the connection’s chat."

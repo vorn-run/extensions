@@ -8,6 +8,7 @@
  * PR to produce, and it looks exactly like success. This checks the wiring
  * itself rather than the result.
  */
+import { extensionDirs } from './extensions.mjs'
 import { readFileSync, existsSync, readdirSync } from 'node:fs'
 import { pathToFileURL } from 'node:url'
 import { resolve } from 'node:path'
@@ -18,7 +19,7 @@ const problems = []
 
 /** The connector a built package exports, or undefined if it exports none. */
 async function builtConnector(dir) {
-  const built = resolve(`packages/${dir}/dist/index.js`)
+  const built = resolve(`${dir}/dist/index.js`)
   if (!existsSync(built)) return undefined
   const module = await import(pathToFileURL(built).href)
   return Object.values(module).find(
@@ -26,14 +27,12 @@ async function builtConnector(dir) {
   )
 }
 
-const packages = readdirSync('packages', { withFileTypes: true })
-  .filter((entry) => entry.isDirectory())
-  .map((entry) => entry.name)
+const packages = extensionDirs()
 
 if (packages.length === 0) problems.push('no packages found')
 
 for (const name of packages) {
-  const dir = `packages/${name}`
+  const dir = name
   const manifestPath = `${dir}/package.json`
   if (!existsSync(manifestPath)) {
     problems.push(`${name}: no package.json`)

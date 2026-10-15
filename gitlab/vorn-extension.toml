@@ -1,0 +1,192 @@
+id = "gitlab"
+name = "GitLab"
+version = "0.1.2"
+api = "vorn:extension@0.9"
+publisher = "Vorn"
+description = "Trigger workflows from GitLab issues, merge requests and pipeline results, and create or comment on issues and merge requests from a step."
+
+[icon]
+view_box = "0 0 24 24"
+paths = ["m23.6004 9.5927-.0337-.0862L20.3.9814a.851.851 0 0 0-.3362-.405.8748.8748 0 0 0-.9997.0539.8748.8748 0 0 0-.29.4399l-2.2055 6.748H7.5375l-2.2057-6.748a.8573.8573 0 0 0-.29-.4412.8748.8748 0 0 0-.9997-.0537.8585.8585 0 0 0-.3362.4049L.4332 9.5015l-.0325.0862a6.0657 6.0657 0 0 0 2.0119 7.0105l.0113.0087.03.0213 4.976 3.7264 2.462 1.8627 1.4995 1.1321a1.0085 1.0085 0 0 0 1.2197 0l1.4995-1.1321 2.4619-1.8627 5.006-3.7489.0125-.01a6.0682 6.0682 0 0 0 2.0094-7.003z"]
+
+[service]
+command = ["node", "index.js"]
+
+[checks]
+command = ["node", "index.js", "--check"]
+
+[declares]
+network = ["gitlab.com"]
+network_from = ["GITLAB_BASE_URL"]
+
+[connector]
+
+[connector.auth]
+rung = "cli"
+probe = { command = "glab", args = ["auth", "status"] }
+borrow = { env = ["GITLAB_TOKEN"], token_args = ["glab", "config", "get", "token"], token_env = "GITLAB_TOKEN" }
+
+[[connector.triggers]]
+type = "issueCreated"
+label = "An issue is created"
+description = "Fires once for each issue created in the project since the last poll."
+status_mapping = [{ upstream = "opened", suggested_local = "todo" }, { upstream = "closed", suggested_local = "done" }]
+default_workflow = { name = "GitLab: issues", default_cron_from_minutes = 5 }
+
+[[connector.triggers]]
+type = "mergeRequestOpened"
+label = "A merge request is opened"
+description = "Fires once for each merge request opened in the project since the last poll."
+status_mapping = [{ upstream = "opened", suggested_local = "in_progress" }, { upstream = "merged", suggested_local = "done" }, { upstream = "closed", suggested_local = "done" }]
+default_workflow = { name = "GitLab: merge requests", default_cron_from_minutes = 5 }
+
+[[connector.triggers]]
+type = "pipelineFinished"
+label = "A pipeline finishes"
+description = "Fires once for each pipeline that reaches success, failed, canceled or skipped, with the status on the item."
+status_mapping = [{ upstream = "success", suggested_local = "done" }, { upstream = "failed", suggested_local = "todo" }, { upstream = "canceled", suggested_local = "cancelled" }, { upstream = "skipped", suggested_local = "cancelled" }]
+default_workflow = { name = "GitLab: pipelines", default_cron_from_minutes = 5 }
+
+[[connector.actions]]
+type = "createIssue"
+label = "Create an issue"
+description = "Open a new issue in a project."
+outputs = [{ key = "id", type = "number", description = "Global issue id" }, { key = "iid", type = "number", description = "The number shown in the project, as in #12" }, { key = "url", description = "Where to read it" }, { key = "title", description = "The title as saved" }, { key = "state", description = "opened" }, { key = "createdAt", description = "When it was created" }]
+
+[[connector.actions.inputs]]
+key = "project"
+label = "Project"
+required = true
+description = "Project path such as group/project, or its numeric id"
+
+[[connector.actions.inputs]]
+key = "title"
+label = "Title"
+required = true
+description = "Issue title"
+
+[[connector.actions.inputs]]
+key = "description"
+label = "Description"
+description = "Markdown body, up to 1,048,576 characters"
+
+[[connector.actions.inputs]]
+key = "labels"
+label = "Labels"
+description = "Comma-separated label names"
+
+[[connector.actions]]
+type = "commentOnIssue"
+label = "Comment on an issue"
+description = "Post a note on an issue."
+outputs = [{ key = "id", type = "number", description = "The note id" }, { key = "body", description = "The comment as posted" }, { key = "author", description = "Who posted it, as {id, username, name}" }, { key = "createdAt", description = "When it was posted" }, { key = "noteableIid", type = "number", description = "The iid it was posted on" }, { key = "noteableType", description = "Issue or MergeRequest" }, { key = "internal", type = "boolean", description = "Whether only members can see it" }]
+
+[[connector.actions.inputs]]
+key = "project"
+label = "Project"
+required = true
+description = "Project path such as group/project, or its numeric id"
+
+[[connector.actions.inputs]]
+key = "iid"
+label = "Issue number"
+type = "number"
+required = true
+description = "The issue number shown in the project (its iid, not the global id)"
+
+[[connector.actions.inputs]]
+key = "body"
+label = "Comment"
+required = true
+description = "Markdown, up to 1,000,000 characters"
+
+[[connector.actions.inputs]]
+key = "internal"
+label = "Internal note"
+type = "boolean"
+description = "Visible to project members only. Defaults to false."
+
+[[connector.actions]]
+type = "commentOnMergeRequest"
+label = "Comment on a merge request"
+description = "Post a note on a merge request."
+outputs = [{ key = "id", type = "number", description = "The note id" }, { key = "body", description = "The comment as posted" }, { key = "author", description = "Who posted it, as {id, username, name}" }, { key = "createdAt", description = "When it was posted" }, { key = "noteableIid", type = "number", description = "The iid it was posted on" }, { key = "noteableType", description = "Issue or MergeRequest" }, { key = "internal", type = "boolean", description = "Whether only members can see it" }]
+
+[[connector.actions.inputs]]
+key = "project"
+label = "Project"
+required = true
+description = "Project path such as group/project, or its numeric id"
+
+[[connector.actions.inputs]]
+key = "iid"
+label = "Merge request number"
+type = "number"
+required = true
+description = "The merge request number shown in the project (its iid)"
+
+[[connector.actions.inputs]]
+key = "body"
+label = "Comment"
+required = true
+description = "Markdown, up to 1,000,000 characters"
+
+[[connector.actions.inputs]]
+key = "internal"
+label = "Internal note"
+type = "boolean"
+description = "Visible to project members only. Defaults to false."
+
+[[connector.actions]]
+type = "getProject"
+label = "Get a project"
+description = "Read a project by path or id."
+outputs = [{ key = "id", type = "number", description = "Project id" }, { key = "name", description = "Display name" }, { key = "path", description = "The last segment of the path" }, { key = "pathWithNamespace", description = "group/project" }, { key = "description", description = "Project description" }, { key = "defaultBranch", description = "Usually main or master" }, { key = "visibility", description = "private, internal or public" }, { key = "url", description = "Where to open it" }, { key = "httpUrlToRepo", description = "Clone URL over HTTPS" }, { key = "sshUrlToRepo", description = "Clone URL over SSH" }, { key = "createdAt", description = "When the project was created" }, { key = "lastActivityAt", description = "When something last happened in it" }, { key = "archived", type = "boolean", description = "Whether it is archived" }, { key = "namespace", description = "The owning group or user, as {id, name, path, fullPath, kind}" }, { key = "starCount", type = "number", description = "Stars" }, { key = "forksCount", type = "number", description = "Forks" }, { key = "topics", description = "Topic names" }]
+
+[[connector.actions.inputs]]
+key = "project"
+label = "Project"
+required = true
+description = "Project path such as group/project, or its numeric id"
+
+[[connector.actions]]
+type = "listOpenMergeRequests"
+label = "List open merge requests"
+description = "The open merge requests of a project, most recently updated first."
+outputs = [{ key = "count", type = "number", description = "How many merge requests came back" }, { key = "items", description = "One entry per merge request, shaped as the merge request trigger delivers it: externalId (the iid), title, url, description, status, labels, updatedAt, and data with id, iid, projectId, sourceBranch, targetBranch, draft, sha, author, createdAt, changedAt, mergedAt, closedAt, hasConflicts, detailedMergeStatus" }]
+
+[[connector.actions.inputs]]
+key = "project"
+label = "Project"
+required = true
+description = "Project path such as group/project, or its numeric id"
+
+[[connector.actions.inputs]]
+key = "limit"
+label = "Maximum"
+type = "number"
+description = "How many to return, 1 to 100. Defaults to 20."
+
+[[connector.actions.inputs]]
+key = "targetBranch"
+label = "Target branch"
+description = "Only merge requests into this branch. Blank for all."
+
+[[connector.actions]]
+type = "getIssue"
+label = "Get an issue"
+description = "Read one issue by its number."
+outputs = [{ key = "id", type = "number", description = "Global issue id" }, { key = "iid", type = "number", description = "The number shown in the project" }, { key = "projectId", type = "number", description = "The project it belongs to" }, { key = "title", description = "Issue title" }, { key = "description", description = "Markdown body" }, { key = "state", description = "opened or closed" }, { key = "url", description = "Where to read it" }, { key = "labels", description = "Label names" }, { key = "author", description = "Who opened it, as {id, username, name}" }, { key = "assignees", description = "Each as {id, username, name}" }, { key = "createdAt", description = "When it was opened" }, { key = "updatedAt", description = "When it last changed" }, { key = "closedAt", description = "When it was closed, or null" }, { key = "issueType", description = "issue, incident, test_case or task" }, { key = "confidential", type = "boolean", description = "Whether only members can see it" }]
+
+[[connector.actions.inputs]]
+key = "project"
+label = "Project"
+required = true
+description = "Project path such as group/project, or its numeric id"
+
+[[connector.actions.inputs]]
+key = "iid"
+label = "Issue number"
+type = "number"
+required = true
+description = "The issue number shown in the project (its iid)"

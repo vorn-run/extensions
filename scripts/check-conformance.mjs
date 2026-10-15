@@ -13,6 +13,7 @@
  * than rewriting it. `--write` is the other half: what an author runs after
  * changing a connector, the way `build-catalog.mjs` is run without `--check`.
  */
+import { extensionDirs } from './extensions.mjs'
 import { execFileSync } from 'node:child_process'
 import { mkdtempSync, readFileSync, readdirSync, existsSync, rmSync, realpathSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -37,7 +38,7 @@ function claim(receipt) {
 function runCheck(dir, into) {
   try {
     execFileSync('node', [CLI, 'check', './dist/index.js', '--mock', '--receipt', into], {
-      cwd: `packages/${dir}`,
+      cwd: dir,
       stdio: 'inherit'
     })
     return true
@@ -49,10 +50,7 @@ function runCheck(dir, into) {
 }
 
 const problems = []
-const dirs = readdirSync('packages', { withFileTypes: true })
-  .filter((entry) => entry.isDirectory())
-  .map((entry) => entry.name)
-  .sort()
+const dirs = extensionDirs()
 
 if (!existsSync(CLI)) {
   console.error(`the connector SDK is not installed — expected its CLI at ${CLI}`)
@@ -62,12 +60,12 @@ if (!existsSync(CLI)) {
 const scratch = mkdtempSync(join(tmpdir(), 'vorn-conformance-'))
 try {
   for (const dir of dirs) {
-    if (!existsSync(`packages/${dir}/dist/index.js`)) {
+    if (!existsSync(`${dir}/dist/index.js`)) {
       problems.push(`${dir}: not built — run \`yarn build\` first`)
       continue
     }
 
-    const committed = `packages/${dir}/${RECEIPT_FILE}`
+    const committed = `${dir}/${RECEIPT_FILE}`
     if (write) {
       if (runCheck(dir, RECEIPT_FILE)) console.log(`  ${dir}: receipt written`)
       continue

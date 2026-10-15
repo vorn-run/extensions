@@ -1210,9 +1210,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vornrun/connector-ado@workspace:packages/ado":
+"@vornrun/connector-ado@workspace:ado":
   version: 0.0.0-use.local
-  resolution: "@vornrun/connector-ado@workspace:packages/ado"
+  resolution: "@vornrun/connector-ado@workspace:ado"
   dependencies:
     "@azure/identity": "npm:^4.13.1"
     "@types/node": "npm:^22.10.2"
@@ -1227,9 +1227,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vornrun/connector-airtable@workspace:packages/airtable":
+"@vornrun/connector-airtable@workspace:airtable":
   version: 0.0.0-use.local
-  resolution: "@vornrun/connector-airtable@workspace:packages/airtable"
+  resolution: "@vornrun/connector-airtable@workspace:airtable"
   dependencies:
     "@types/node": "npm:^22.10.2"
     "@vitest/coverage-v8": "npm:^4.1.10"
@@ -1242,9 +1242,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vornrun/connector-anthropic@workspace:packages/anthropic":
+"@vornrun/connector-anthropic@workspace:anthropic":
   version: 0.0.0-use.local
-  resolution: "@vornrun/connector-anthropic@workspace:packages/anthropic"
+  resolution: "@vornrun/connector-anthropic@workspace:anthropic"
   dependencies:
     "@types/node": "npm:^22.10.2"
     "@vitest/coverage-v8": "npm:^4.1.10"
@@ -1257,9 +1257,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vornrun/connector-discord@workspace:packages/discord":
+"@vornrun/connector-discord@workspace:discord":
   version: 0.0.0-use.local
-  resolution: "@vornrun/connector-discord@workspace:packages/discord"
+  resolution: "@vornrun/connector-discord@workspace:discord"
   dependencies:
     "@types/node": "npm:^22.10.2"
     "@vitest/coverage-v8": "npm:^4.1.10"
@@ -1272,9 +1272,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vornrun/connector-github@workspace:packages/github":
+"@vornrun/connector-github@workspace:github":
   version: 0.0.0-use.local
-  resolution: "@vornrun/connector-github@workspace:packages/github"
+  resolution: "@vornrun/connector-github@workspace:github"
   dependencies:
     "@octokit/plugin-retry": "npm:^8.1.1"
     "@octokit/plugin-throttling": "npm:^11.0.5"
@@ -1290,9 +1290,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vornrun/connector-gitlab@workspace:packages/gitlab":
+"@vornrun/connector-gitlab@workspace:gitlab":
   version: 0.0.0-use.local
-  resolution: "@vornrun/connector-gitlab@workspace:packages/gitlab"
+  resolution: "@vornrun/connector-gitlab@workspace:gitlab"
   dependencies:
     "@types/node": "npm:^22.10.2"
     "@vitest/coverage-v8": "npm:^4.1.10"
@@ -1305,9 +1305,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vornrun/connector-hubspot@workspace:packages/hubspot":
+"@vornrun/connector-hubspot@workspace:hubspot":
   version: 0.0.0-use.local
-  resolution: "@vornrun/connector-hubspot@workspace:packages/hubspot"
+  resolution: "@vornrun/connector-hubspot@workspace:hubspot"
   dependencies:
     "@types/node": "npm:^22.10.2"
     "@vitest/coverage-v8": "npm:^4.1.10"
@@ -1320,9 +1320,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vornrun/connector-jira@workspace:packages/jira":
+"@vornrun/connector-jira@workspace:jira":
   version: 0.0.0-use.local
-  resolution: "@vornrun/connector-jira@workspace:packages/jira"
+  resolution: "@vornrun/connector-jira@workspace:jira"
   dependencies:
     "@types/node": "npm:^22.10.2"
     "@vitest/coverage-v8": "npm:^4.1.10"
@@ -1335,9 +1335,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vornrun/connector-kusto@workspace:packages/kusto":
+"@vornrun/connector-kusto@workspace:kusto":
   version: 0.0.0-use.local
-  resolution: "@vornrun/connector-kusto@workspace:packages/kusto"
+  resolution: "@vornrun/connector-kusto@workspace:kusto"
   dependencies:
     "@azure/identity": "npm:^4.13.1"
     "@types/node": "npm:^22.10.2"
@@ -1352,9 +1352,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vornrun/connector-linear@workspace:packages/linear":
+"@vornrun/connector-linear@workspace:linear":
   version: 0.0.0-use.local
-  resolution: "@vornrun/connector-linear@workspace:packages/linear"
+  resolution: "@vornrun/connector-linear@workspace:linear"
   dependencies:
     "@types/node": "npm:^22.10.2"
     "@vitest/coverage-v8": "npm:^4.1.10"
@@ -1367,9 +1367,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vornrun/connector-mysql@workspace:packages/mysql":
+"@vornrun/connector-mysql@workspace:mysql":
   version: 0.0.0-use.local
-  resolution: "@vornrun/connector-mysql@workspace:packages/mysql"
+  resolution: "@vornrun/connector-mysql@workspace:mysql"
   dependencies:
     "@types/node": "npm:^22.10.2"
     "@vitest/coverage-v8": "npm:^4.1.10"
@@ -1383,9 +1383,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vornrun/connector-notion@workspace:packages/notion":
+"@vornrun/connector-notion@workspace:notion":
   version: 0.0.0-use.local
-  resolution: "@vornrun/connector-notion@workspace:packages/notion"
+  resolution: "@vornrun/connector-notion@workspace:notion"
   dependencies:
     "@notionhq/client": "npm:^5.24.0"
     "@types/node": "npm:^22.10.2"
@@ -1399,9 +1399,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vornrun/connector-ollama@workspace:packages/ollama":
+"@vornrun/connector-ollama@workspace:ollama":
   version: 0.0.0-use.local
-  resolution: "@vornrun/connector-ollama@workspace:packages/ollama"
+  resolution: "@vornrun/connector-ollama@workspace:ollama"
   dependencies:
     "@types/node": "npm:^22.10.2"
     "@vitest/coverage-v8": "npm:^4.1.10"
@@ -1414,9 +1414,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vornrun/connector-openai@workspace:packages/openai":
+"@vornrun/connector-openai@workspace:openai":
   version: 0.0.0-use.local
-  resolution: "@vornrun/connector-openai@workspace:packages/openai"
+  resolution: "@vornrun/connector-openai@workspace:openai"
   dependencies:
     "@types/node": "npm:^22.10.2"
     "@vitest/coverage-v8": "npm:^4.1.10"
@@ -1429,9 +1429,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vornrun/connector-postgres@workspace:packages/postgres":
+"@vornrun/connector-postgres@workspace:postgres":
   version: 0.0.0-use.local
-  resolution: "@vornrun/connector-postgres@workspace:packages/postgres"
+  resolution: "@vornrun/connector-postgres@workspace:postgres"
   dependencies:
     "@types/node": "npm:^22.10.2"
     "@vitest/coverage-v8": "npm:^4.1.10"
@@ -1445,9 +1445,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vornrun/connector-rss@workspace:packages/rss":
+"@vornrun/connector-rss@workspace:rss":
   version: 0.0.0-use.local
-  resolution: "@vornrun/connector-rss@workspace:packages/rss"
+  resolution: "@vornrun/connector-rss@workspace:rss"
   dependencies:
     "@types/node": "npm:^22.10.2"
     "@vitest/coverage-v8": "npm:^4.1.10"
@@ -1472,9 +1472,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vornrun/connector-slack@workspace:packages/slack":
+"@vornrun/connector-slack@workspace:slack":
   version: 0.0.0-use.local
-  resolution: "@vornrun/connector-slack@workspace:packages/slack"
+  resolution: "@vornrun/connector-slack@workspace:slack"
   dependencies:
     "@types/node": "npm:^22.10.2"
     "@vitest/coverage-v8": "npm:^4.1.10"
@@ -1487,9 +1487,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vornrun/connector-stripe@workspace:packages/stripe":
+"@vornrun/connector-stripe@workspace:stripe":
   version: 0.0.0-use.local
-  resolution: "@vornrun/connector-stripe@workspace:packages/stripe"
+  resolution: "@vornrun/connector-stripe@workspace:stripe"
   dependencies:
     "@types/node": "npm:^22.10.2"
     "@vitest/coverage-v8": "npm:^4.1.10"
@@ -1502,9 +1502,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vornrun/connector-substack@workspace:packages/substack":
+"@vornrun/connector-substack@workspace:substack":
   version: 0.0.0-use.local
-  resolution: "@vornrun/connector-substack@workspace:packages/substack"
+  resolution: "@vornrun/connector-substack@workspace:substack"
   dependencies:
     "@types/node": "npm:^22.10.2"
     "@vitest/coverage-v8": "npm:^4.1.10"
@@ -1518,9 +1518,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vornrun/connector-telegram@workspace:packages/telegram":
+"@vornrun/connector-telegram@workspace:telegram":
   version: 0.0.0-use.local
-  resolution: "@vornrun/connector-telegram@workspace:packages/telegram"
+  resolution: "@vornrun/connector-telegram@workspace:telegram"
   dependencies:
     "@types/node": "npm:^22.10.2"
     "@vitest/coverage-v8": "npm:^4.1.10"
@@ -1533,9 +1533,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vornrun/connector-trello@workspace:packages/trello":
+"@vornrun/connector-trello@workspace:trello":
   version: 0.0.0-use.local
-  resolution: "@vornrun/connector-trello@workspace:packages/trello"
+  resolution: "@vornrun/connector-trello@workspace:trello"
   dependencies:
     "@types/node": "npm:^22.10.2"
     "@vitest/coverage-v8": "npm:^4.1.10"
@@ -1548,9 +1548,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@vornrun/connector-x@workspace:packages/x":
+"@vornrun/connector-x@workspace:x":
   version: 0.0.0-use.local
-  resolution: "@vornrun/connector-x@workspace:packages/x"
+  resolution: "@vornrun/connector-x@workspace:x"
   dependencies:
     "@types/node": "npm:^22.10.2"
     "@vitest/coverage-v8": "npm:^4.1.10"
@@ -3734,9 +3734,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vorn-connectors@workspace:.":
+"vorn-extensions@workspace:.":
   version: 0.0.0-use.local
-  resolution: "vorn-connectors@workspace:."
+  resolution: "vorn-extensions@workspace:."
   languageName: unknown
   linkType: soft
 

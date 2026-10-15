@@ -1,0 +1,344 @@
+id = "hubspot"
+name = "HubSpot"
+version = "0.1.1"
+api = "vorn:extension@0.9"
+publisher = "Vorn"
+description = "Trigger workflows from new HubSpot contacts, companies and deals or deal stage changes, and create, update, search, annotate or associate CRM records from a step."
+
+[icon]
+view_box = "0 0 24 24"
+paths = ["M9.8 14a5.2 5.2 0 1 0 10.4 0a5.2 5.2 0 1 0 -10.4 0zM12.4 14a2.6 2.6 0 1 1 5.2 0a2.6 2.6 0 1 1 -5.2 0zM4.85 4.62L10.97 11.07L12.28 9.83L6.15 3.38zM3.9 4a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0 -3.2 0zM7.59 21.68L11.91 17.9L10.72 16.55L6.41 20.32zM5.7 21a1.3 1.3 0 1 0 2.6 0a1.3 1.3 0 1 0 -2.6 0zM2.96 14.4L10.07 14.7L10.14 12.9L3.04 12.6zM1.7 13.5a1.3 1.3 0 1 0 2.6 0a1.3 1.3 0 1 0 -2.6 0z"]
+
+[service]
+command = ["node", "index.js"]
+
+[checks]
+command = ["node", "index.js", "--check"]
+
+[declares]
+network = ["api.hubapi.com"]
+
+[connector]
+
+[connector.auth]
+rung = "key"
+keys = ["accessToken"]
+
+[[connector.triggers]]
+type = "newContact"
+label = "A contact is created"
+description = "Fires once for each contact created since the last poll, oldest first."
+default_workflow = { name = "HubSpot: new contacts", default_cron_from_minutes = 5 }
+
+[[connector.triggers]]
+type = "newDeal"
+label = "A deal is created"
+description = "Fires once for each deal created since the last poll, oldest first, in the configured pipeline or in all of them."
+default_workflow = { name = "HubSpot: new deals", default_cron_from_minutes = 5 }
+
+[[connector.triggers]]
+type = "newCompany"
+label = "A company is created"
+description = "Fires once for each company created since the last poll, oldest first."
+default_workflow = { name = "HubSpot: new companies", default_cron_from_minutes = 5 }
+
+[[connector.triggers]]
+type = "dealStageChanged"
+label = "A deal moves to a stage"
+description = "Fires once per deal and stage when a deal is found at a stage it has not fired for; a deal edited without changing stage is dropped. Filter by pipeline and stage in the settings."
+default_workflow = { name = "HubSpot: deal stage changes", default_cron_from_minutes = 5 }
+
+[[connector.actions]]
+type = "createContact"
+label = "Create a contact"
+description = "Add a contact by email. An email that already exists answers 409 with the existing id in the message."
+outputs = [{ key = "id", description = "Record id, a numeric string" }, { key = "properties", description = "The properties HubSpot returned, every value a string or null" }, { key = "createdAt", description = "When the record was created, ISO 8601" }, { key = "updatedAt", description = "When the record last changed, ISO 8601" }, { key = "archived", type = "boolean", description = "Whether the record is archived" }]
+
+[[connector.actions.inputs]]
+key = "email"
+label = "Email"
+required = true
+description = "The contact’s email address, HubSpot’s unique identifier for contacts."
+
+[[connector.actions.inputs]]
+key = "firstname"
+label = "First name"
+description = "First name."
+
+[[connector.actions.inputs]]
+key = "lastname"
+label = "Last name"
+description = "Last name."
+
+[[connector.actions.inputs]]
+key = "phone"
+label = "Phone"
+description = "Phone number."
+
+[[connector.actions.inputs]]
+key = "company"
+label = "Company"
+description = "Company name, as a text property on the contact rather than an association."
+
+[[connector.actions.inputs]]
+key = "properties"
+label = "Properties"
+type = "json"
+description = "A JSON object of extra properties to set keyed by internal property name, e.g. {\"lifecyclestage\":\"customer\"}."
+
+[[connector.actions]]
+type = "updateContact"
+label = "Update a contact"
+description = "Set the given properties of a contact and leave the rest as they were."
+outputs = [{ key = "id", description = "Record id, a numeric string" }, { key = "properties", description = "The properties HubSpot returned, every value a string or null" }, { key = "createdAt", description = "When the record was created, ISO 8601" }, { key = "updatedAt", description = "When the record last changed, ISO 8601" }, { key = "archived", type = "boolean", description = "Whether the record is archived" }]
+
+[[connector.actions.inputs]]
+key = "contactId"
+label = "Contact"
+required = true
+description = "The contact’s record id, such as 33451."
+
+[[connector.actions.inputs]]
+key = "properties"
+label = "Properties"
+type = "json"
+required = true
+description = "A JSON object of properties to set keyed by internal property name, e.g. {\"lifecyclestage\":\"customer\"}."
+
+[[connector.actions]]
+type = "createDeal"
+label = "Create a deal"
+description = "Add a deal at a stage of a pipeline. Every call makes a new deal."
+outputs = [{ key = "id", description = "Record id, a numeric string" }, { key = "properties", description = "The properties HubSpot returned, every value a string or null" }, { key = "createdAt", description = "When the record was created, ISO 8601" }, { key = "updatedAt", description = "When the record last changed, ISO 8601" }, { key = "archived", type = "boolean", description = "Whether the record is archived" }]
+
+[[connector.actions.inputs]]
+key = "dealname"
+label = "Deal name"
+required = true
+description = "The deal’s name."
+
+[[connector.actions.inputs]]
+key = "dealstage"
+label = "Stage"
+required = true
+description = "A stage id from listDealPipelines, such as appointmentscheduled or closedwon in the default pipeline; custom stages are numeric."
+
+[[connector.actions.inputs]]
+key = "pipeline"
+label = "Pipeline"
+description = "A pipeline id from listDealPipelines. Blank uses the default pipeline."
+
+[[connector.actions.inputs]]
+key = "amount"
+label = "Amount"
+type = "number"
+description = "The deal amount in the account’s currency."
+
+[[connector.actions.inputs]]
+key = "closedate"
+label = "Close date"
+description = "The expected close date as an ISO 8601 instant, such as 2019-12-07T16:50:06.678Z."
+
+[[connector.actions.inputs]]
+key = "ownerId"
+label = "Owner"
+description = "The owner id from listOwners, its id rather than its userId."
+
+[[connector.actions.inputs]]
+key = "properties"
+label = "Properties"
+type = "json"
+description = "A JSON object of extra properties to set keyed by internal property name, e.g. {\"lifecyclestage\":\"customer\"}."
+
+[[connector.actions]]
+type = "updateDeal"
+label = "Update a deal"
+description = "Set the given properties of a deal, such as {\"dealstage\":\"closedwon\"}, and leave the rest as they were."
+outputs = [{ key = "id", description = "Record id, a numeric string" }, { key = "properties", description = "The properties HubSpot returned, every value a string or null" }, { key = "createdAt", description = "When the record was created, ISO 8601" }, { key = "updatedAt", description = "When the record last changed, ISO 8601" }, { key = "archived", type = "boolean", description = "Whether the record is archived" }]
+
+[[connector.actions.inputs]]
+key = "dealId"
+label = "Deal"
+required = true
+description = "The deal’s record id."
+
+[[connector.actions.inputs]]
+key = "properties"
+label = "Properties"
+type = "json"
+required = true
+description = "A JSON object of properties to set keyed by internal property name, e.g. {\"lifecyclestage\":\"customer\"}."
+
+[[connector.actions]]
+type = "createCompany"
+label = "Create a company"
+description = "Add a company by name, with its domain when known. Every call makes a new company."
+outputs = [{ key = "id", description = "Record id, a numeric string" }, { key = "properties", description = "The properties HubSpot returned, every value a string or null" }, { key = "createdAt", description = "When the record was created, ISO 8601" }, { key = "updatedAt", description = "When the record last changed, ISO 8601" }, { key = "archived", type = "boolean", description = "Whether the record is archived" }]
+
+[[connector.actions.inputs]]
+key = "name"
+label = "Name"
+required = true
+description = "The company name."
+
+[[connector.actions.inputs]]
+key = "domain"
+label = "Domain"
+description = "The website domain such as hubspot.com, HubSpot’s unique identifier for companies."
+
+[[connector.actions.inputs]]
+key = "properties"
+label = "Properties"
+type = "json"
+description = "A JSON object of extra properties to set keyed by internal property name, e.g. {\"lifecyclestage\":\"customer\"}."
+
+[[connector.actions]]
+type = "createNote"
+label = "Add a note to a record"
+description = "Attach a note to a contact, company or deal, stamped with the current time."
+outputs = [{ key = "id", description = "Record id, a numeric string" }, { key = "properties", description = "The properties HubSpot returned, every value a string or null" }, { key = "createdAt", description = "When the record was created, ISO 8601" }, { key = "updatedAt", description = "When the record last changed, ISO 8601" }, { key = "archived", type = "boolean", description = "Whether the record is archived" }]
+
+[[connector.actions.inputs]]
+key = "objectType"
+label = "Record type"
+type = "select"
+required = true
+description = "What the note is attached to: contact, company or deal."
+options = [{ value = "contact", label = "Contact" }, { value = "company", label = "Company" }, { value = "deal", label = "Deal" }]
+
+[[connector.actions.inputs]]
+key = "objectId"
+label = "Record"
+required = true
+description = "The record id to attach the note to."
+
+[[connector.actions.inputs]]
+key = "body"
+label = "Note"
+required = true
+description = "The note text, up to 65,536 characters."
+
+[[connector.actions.inputs]]
+key = "ownerId"
+label = "Owner"
+description = "The owner id from listOwners, its id rather than its userId."
+
+[[connector.actions]]
+type = "associate"
+label = "Associate two records"
+description = "Link two records with the default association for their types, or with a labelled type id."
+outputs = [{ key = "fromObjectTypeId", description = "The from record’s object type id, such as 0-1" }, { key = "fromObjectId", description = "The from record id" }, { key = "toObjectTypeId", description = "The to record’s object type id, such as 0-3" }, { key = "toObjectId", description = "The to record id" }, { key = "labels", description = "The association labels now in place, such as [\"Point of contact\"]" }]
+
+[[connector.actions.inputs]]
+key = "fromObjectType"
+label = "From type"
+required = true
+description = "contact, company, deal or note, or an object type id such as 0-1."
+
+[[connector.actions.inputs]]
+key = "fromObjectId"
+label = "From record"
+required = true
+description = "The record id to link from."
+
+[[connector.actions.inputs]]
+key = "toObjectType"
+label = "To type"
+required = true
+description = "contact, company, deal or note, or an object type id."
+
+[[connector.actions.inputs]]
+key = "toObjectId"
+label = "To record"
+required = true
+description = "The record id to link to."
+
+[[connector.actions.inputs]]
+key = "associationTypeId"
+label = "Association type id"
+type = "number"
+description = "A labelled type id such as 1 for a contact’s primary company. Blank uses the default association for the two types."
+
+[[connector.actions]]
+type = "getContact"
+label = "Get a contact"
+description = "Read one contact by record id or by email address."
+outputs = [{ key = "id", description = "Record id, a numeric string" }, { key = "properties", description = "The properties HubSpot returned, every value a string or null" }, { key = "createdAt", description = "When the record was created, ISO 8601" }, { key = "updatedAt", description = "When the record last changed, ISO 8601" }, { key = "archived", type = "boolean", description = "Whether the record is archived" }]
+
+[[connector.actions.inputs]]
+key = "contactId"
+label = "Contact"
+required = true
+description = "The contact’s record id, or an email address to look it up by."
+
+[[connector.actions.inputs]]
+key = "properties"
+label = "Properties to return"
+description = "Comma-separated internal property names to return; blank returns the standard set."
+
+[[connector.actions]]
+type = "searchContacts"
+label = "Search contacts"
+description = "Find contacts by free text or by filter groups, one page at a time."
+outputs = [{ key = "total", type = "number", description = "How many contacts match in all" }, { key = "contacts", description = "The page of matching records, each { id, properties, createdAt, updatedAt, archived }" }, { key = "nextAfter", description = "Pass back as after to fetch the next page; empty on the last one" }]
+
+[[connector.actions.inputs]]
+key = "query"
+label = "Query"
+description = "Text matched against the default searchable properties: name, email, phone and company."
+
+[[connector.actions.inputs]]
+key = "filterGroups"
+label = "Filter groups"
+type = "json"
+description = "A JSON array of { \"filters\": [{ \"propertyName\", \"operator\", \"value\" }] } groups exactly as the search API takes them; groups are ORed and filters within one ANDed."
+
+[[connector.actions.inputs]]
+key = "properties"
+label = "Properties to return"
+description = "Comma-separated internal property names to return; blank returns the standard set."
+
+[[connector.actions.inputs]]
+key = "limit"
+label = "Limit"
+type = "number"
+description = "Contacts per page, 1 to 200. Defaults to 10."
+
+[[connector.actions.inputs]]
+key = "after"
+label = "After"
+description = "The paging.next.after cursor from an earlier page."
+
+[[connector.actions]]
+type = "listDealPipelines"
+label = "List deal pipelines"
+description = "The deal pipelines of the account with their stages."
+outputs = [{ key = "pipelines", description = "One entry per pipeline: id, label, displayOrder, archived, stages [{ id, label, displayOrder, metadata: { probability } }]" }]
+
+[[connector.actions]]
+type = "listOwners"
+label = "List owners"
+description = "The users who can own records, with the id to assign a record by."
+outputs = [{ key = "owners", description = "One entry per owner: id, email, firstName, lastName, userId, type, archived, createdAt, updatedAt, teams; assign records by id, never userId" }, { key = "nextAfter", description = "Pass back as after to fetch the next page; empty on the last one" }]
+
+[[connector.actions.inputs]]
+key = "email"
+label = "Email"
+description = "Only the owner with this email address."
+
+[[connector.actions.inputs]]
+key = "limit"
+label = "Limit"
+type = "number"
+description = "Owners per page. Defaults to 100."
+
+[[connector.actions.inputs]]
+key = "after"
+label = "After"
+description = "The paging.next.after cursor from an earlier page."
+
+[[connector.actions.inputs]]
+key = "archived"
+label = "Archived"
+type = "boolean"
+description = "List deactivated users instead of active ones."

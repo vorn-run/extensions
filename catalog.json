@@ -38,7 +38,9 @@
           "launch"
         ]
       },
-      "packUrl": "https://github.com/vorn-run/connectors/releases/download/ado-v0.4.1/ado-0.4.1.vorn.tgz",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "ado",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/ado-v0.4.1/ado-0.4.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -144,6 +146,11 @@
           "required": false,
           "description": "Upper bound on work items read in one poll."
         }
+      ],
+      "hosts": [
+        "dev.azure.com",
+        "*.dev.azure.com",
+        "*.visualstudio.com"
       ]
     },
     {
@@ -184,7 +191,9 @@
           "mock"
         ]
       },
-      "packUrl": "https://github.com/vorn-run/connectors/releases/download/airtable-v0.1.1/airtable-0.1.1.vorn.tgz",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "airtable",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/airtable-v0.1.1/airtable-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -278,6 +287,9 @@
           "required": false,
           "description": "The name of a \"Last modified time\" field in the table, for the updated-record trigger. Blank falls back to LAST_MODIFIED_TIME() and the poll time."
         }
+      ],
+      "hosts": [
+        "api.airtable.com"
       ]
     },
     {
@@ -319,7 +331,9 @@
           "mock"
         ]
       },
-      "packUrl": "https://github.com/vorn-run/connectors/releases/download/anthropic-v0.1.1/anthropic-0.1.1.vorn.tgz",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "anthropic",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/anthropic-v0.1.1/anthropic-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -387,6 +401,9 @@
           "required": true,
           "description": "An API key from console.anthropic.com/settings/keys, for a single workspace."
         }
+      ],
+      "hosts": [
+        "api.anthropic.com"
       ]
     },
     {
@@ -429,7 +446,9 @@
           "mock"
         ]
       },
-      "packUrl": "https://github.com/vorn-run/connectors/releases/download/discord-v0.1.1/discord-0.1.1.vorn.tgz",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "discord",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/discord-v0.1.1/discord-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -526,6 +545,9 @@
           "required": false,
           "description": "Pages of 100 messages or 1000 members one poll walks before leaving the rest for the next."
         }
+      ],
+      "hosts": [
+        "discord.com"
       ]
     },
     {
@@ -562,7 +584,9 @@
           "launch"
         ]
       },
-      "packUrl": "https://github.com/vorn-run/connectors/releases/download/github-v0.3.0/github-0.3.0.vorn.tgz",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "github",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/github-v0.3.0/github-0.3.0.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -654,6 +678,11 @@
           "required": false,
           "description": "Comma-separated. Applies to the issue trigger only."
         }
+      ],
+      "hosts": [
+        "api.github.com",
+        "github.com",
+        "uploads.github.com"
       ]
     },
     {
@@ -695,7 +724,9 @@
           "mock"
         ]
       },
-      "packUrl": "https://github.com/vorn-run/connectors/releases/download/gitlab-v0.1.2/gitlab-0.1.2.vorn.tgz",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "gitlab",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/gitlab-v0.1.2/gitlab-0.1.2.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -772,6 +803,12 @@
           "required": false,
           "description": "Branch or tag whose pipelines to watch. Blank for every ref."
         }
+      ],
+      "hosts": [
+        "gitlab.com"
+      ],
+      "hostsFrom": [
+        "GITLAB_BASE_URL"
       ]
     },
     {
@@ -813,7 +850,9 @@
           "mock"
         ]
       },
-      "packUrl": "https://github.com/vorn-run/connectors/releases/download/hubspot-v0.1.1/hubspot-0.1.1.vorn.tgz",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "hubspot",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/hubspot-v0.1.1/hubspot-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -925,6 +964,9 @@
           "required": false,
           "description": "A stage id such as closedwon or a numeric custom stage id; the stage-changed trigger then fires only for deals reaching it."
         }
+      ],
+      "hosts": [
+        "api.hubapi.com"
       ]
     },
     {
@@ -966,7 +1008,9 @@
           "mock"
         ]
       },
-      "packUrl": "https://github.com/vorn-run/connectors/releases/download/jira-v0.1.1/jira-0.1.1.vorn.tgz",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "jira",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/jira-v0.1.1/jira-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1075,6 +1119,13 @@
           "required": false,
           "description": "The status name the issueTransitioned trigger watches for, such as Done. Only that trigger reads it."
         }
+      ],
+      "hosts": [
+        "*.atlassian.net",
+        "api.atlassian.com"
+      ],
+      "hostsFrom": [
+        "JIRA_SITE_URL"
       ]
     },
     {
@@ -1113,7 +1164,9 @@
           "launch"
         ]
       },
-      "packUrl": "https://github.com/vorn-run/connectors/releases/download/kusto-v0.6.3/kusto-0.6.3.vorn.tgz",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "kusto",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/kusto-v0.6.3/kusto-0.6.3.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1175,6 +1228,12 @@
           "required": false,
           "description": "How far back the very first poll looks, e.g. 30m, 2h, 7d."
         }
+      ],
+      "hosts": [
+        "*.kusto.windows.net"
+      ],
+      "hostsFrom": [
+        "KUSTO_CLUSTER"
       ]
     },
     {
@@ -1211,7 +1270,9 @@
           "launch"
         ]
       },
-      "packUrl": "https://github.com/vorn-run/connectors/releases/download/linear-v0.1.3/linear-0.1.3.vorn.tgz",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "linear",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/linear-v0.1.3/linear-0.1.3.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1265,6 +1326,9 @@
           "name": "LINEAR_LIMIT",
           "required": false
         }
+      ],
+      "hosts": [
+        "api.linear.app"
       ]
     },
     {
@@ -1303,7 +1367,9 @@
           "launch"
         ]
       },
-      "packUrl": "https://github.com/vorn-run/connectors/releases/download/mysql-v0.1.1/mysql-0.1.1.vorn.tgz",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "mysql",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/mysql-v0.1.1/mysql-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1459,7 +1525,9 @@
           "launch"
         ]
       },
-      "packUrl": "https://github.com/vorn-run/connectors/releases/download/notion-v0.1.3/notion-0.1.3.vorn.tgz",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "notion",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/notion-v0.1.3/notion-0.1.3.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1521,6 +1589,9 @@
           "name": "NOTION_LIMIT",
           "required": false
         }
+      ],
+      "hosts": [
+        "api.notion.com"
       ]
     },
     {
@@ -1564,7 +1635,9 @@
           "mock"
         ]
       },
-      "packUrl": "https://github.com/vorn-run/connectors/releases/download/ollama-v0.1.1/ollama-0.1.1.vorn.tgz",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "ollama",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/ollama-v0.1.1/ollama-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1641,6 +1714,12 @@
           "required": false,
           "description": "The server origin, http://localhost:11434 by default. A trailing / or /api is stripped and a bare host:port gets http://."
         }
+      ],
+      "hosts": [
+        "localhost"
+      ],
+      "hostsFrom": [
+        "OLLAMA_HOST"
       ]
     },
     {
@@ -1685,7 +1764,9 @@
           "mock"
         ]
       },
-      "packUrl": "https://github.com/vorn-run/connectors/releases/download/openai-v0.1.1/openai-0.1.1.vorn.tgz",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "openai",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/openai-v0.1.1/openai-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1792,6 +1873,9 @@
           "required": false,
           "description": "How far before the watermark the fine-tuning poll reads, because a job is created long before it finishes."
         }
+      ],
+      "hosts": [
+        "api.openai.com"
       ]
     },
     {
@@ -1830,7 +1914,9 @@
           "launch"
         ]
       },
-      "packUrl": "https://github.com/vorn-run/connectors/releases/download/postgres-v0.1.2/postgres-0.1.2.vorn.tgz",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "postgres",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/postgres-v0.1.2/postgres-0.1.2.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1967,7 +2053,9 @@
           "launch"
         ]
       },
-      "packUrl": "https://github.com/vorn-run/connectors/releases/download/rss-v0.1.3/rss-0.1.3.vorn.tgz",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "rss",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/rss-v0.1.3/rss-0.1.3.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -2021,6 +2109,9 @@
           "required": false,
           "description": "Sent with every request; some hosts refuse requests without one."
         }
+      ],
+      "hostsFrom": [
+        "RSS_FEEDS"
       ]
     },
     {
@@ -2062,7 +2153,9 @@
           "mock"
         ]
       },
-      "packUrl": "https://github.com/vorn-run/connectors/releases/download/slack-v0.1.2/slack-0.1.2.vorn.tgz",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "slack",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/slack-v0.1.2/slack-0.1.2.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -2149,6 +2242,10 @@
           "required": false,
           "description": "Messages read per request, 1 to 999."
         }
+      ],
+      "hosts": [
+        "slack.com",
+        "files.slack.com"
       ]
     },
     {
@@ -2190,7 +2287,9 @@
           "mock"
         ]
       },
-      "packUrl": "https://github.com/vorn-run/connectors/releases/download/stripe-v0.1.1/stripe-0.1.1.vorn.tgz",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "stripe",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/stripe-v0.1.1/stripe-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -2282,6 +2381,10 @@
           "required": false,
           "description": "How far before now the failed-invoice poll reads open invoices. A day by default, because retries are days apart."
         }
+      ],
+      "hosts": [
+        "api.stripe.com",
+        "files.stripe.com"
       ]
     },
     {
@@ -2322,7 +2425,9 @@
           "launch"
         ]
       },
-      "packUrl": "https://github.com/vorn-run/connectors/releases/download/substack-v0.2.4/substack-0.2.4.vorn.tgz",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "substack",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/substack-v0.2.4/substack-0.2.4.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -2439,6 +2544,10 @@
           "required": false,
           "description": "Your publication's substack.com subdomain, such as exampleletter. The new-post trigger reads its feed, and a step that names no publication uses it."
         }
+      ],
+      "hosts": [
+        "substack.com",
+        "*.substack.com"
       ]
     },
     {
@@ -2476,7 +2585,9 @@
           "launch"
         ]
       },
-      "packUrl": "https://github.com/vorn-run/connectors/releases/download/telegram-v0.1.1/telegram-0.1.1.vorn.tgz",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "telegram",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/telegram-v0.1.1/telegram-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -2533,6 +2644,9 @@
           "required": false,
           "description": "1 to 100. Anything left over is read by the next poll."
         }
+      ],
+      "hosts": [
+        "api.telegram.org"
       ]
     },
     {
@@ -2573,7 +2687,9 @@
           "mock"
         ]
       },
-      "packUrl": "https://github.com/vorn-run/connectors/releases/download/trello-v0.1.1/trello-0.1.1.vorn.tgz",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "trello",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/trello-v0.1.1/trello-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -2685,6 +2801,9 @@
           "required": false,
           "description": "For the card-due-soon trigger: how many hours ahead a due date must fall to fire."
         }
+      ],
+      "hosts": [
+        "api.trello.com"
       ]
     },
     {
@@ -2725,7 +2844,9 @@
           "mock"
         ]
       },
-      "packUrl": "https://github.com/vorn-run/connectors/releases/download/x-v0.1.1/x-0.1.1.vorn.tgz",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "x",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/x-v0.1.1/x-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -2807,6 +2928,11 @@
           "required": false,
           "description": "Recent-search query the \"new search result\" trigger polls, such as `from:xdevelopers -is:retweet`."
         }
+      ],
+      "hosts": [
+        "api.x.com",
+        "api.twitter.com",
+        "upload.twitter.com"
       ]
     }
   ],
