@@ -48,6 +48,7 @@
     "vitest": "^4.1.10"
   },
   "vorn": {
+    "publisher": "Vorn",
     "category": "Productivity",
     "keywords": [
       "notion",
@@ -58,6 +59,8 @@
       "wiki"
     ],
     "auth": "Paste a Notion integration token, then share the pages you want it to see with the connection in Notion. There is no Notion CLI to sign in with.",
-    "packs": true
+    "hosts": [
+      "api.notion.com"
+    ]
   }
 }

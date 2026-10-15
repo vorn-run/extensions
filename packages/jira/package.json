@@ -46,6 +46,7 @@
     "vitest": "^4.1.10"
   },
   "vorn": {
+    "publisher": "Vorn",
     "category": "Development",
     "keywords": [
       "jira",
@@ -57,6 +58,12 @@
       "bugs"
     ],
     "auth": "Paste your Atlassian site URL, account email and an API token from id.atlassian.com/manage-profile/security/api-tokens. There is no Jira CLI to sign in with.",
-    "packs": true
+    "hosts": [
+      "*.atlassian.net",
+      "api.atlassian.com"
+    ],
+    "hostsFrom": [
+      "JIRA_SITE_URL"
+    ]
   }
 }

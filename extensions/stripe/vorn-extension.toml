@@ -1,0 +1,169 @@
+id = "stripe"
+name = "Stripe"
+version = "0.1.1"
+api = "vorn:connector@1"
+publisher = "Vorn"
+description = "Trigger workflows from new Stripe customers, succeeded payments and paid or failed invoices, and create customers, issue refunds or read balances and charges from a step."
+
+[icon]
+view_box = "0 0 24 24"
+paths = ["M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z"]
+
+[service]
+command = ["node", "index.js"]
+
+[checks]
+command = ["node", "index.js", "--check"]
+
+[declares]
+network = ["api.stripe.com", "files.stripe.com"]
+
+[connector.auth]
+rung = "cli"
+probe = { command = "stripe", args = ["login", "list"] }
+borrow = { env = ["STRIPE_API_KEY"], token_env = "STRIPE_API_KEY" }
+
+[[connector.triggers]]
+type = "newCustomer"
+label = "A customer is created"
+description = "Fires once for each customer created since the last poll."
+default_workflow = { name = "Stripe: new customers", default_cron_from_minutes = 5 }
+
+[[connector.triggers]]
+type = "paymentSucceeded"
+label = "A payment succeeds"
+description = "Fires once for each payment intent that reaches succeeded. Amounts are integers in the smallest currency unit."
+status_mapping = [{ upstream = "succeeded", suggested_local = "done" }]
+default_workflow = { name = "Stripe: payments", default_cron_from_minutes = 5 }
+
+[[connector.triggers]]
+type = "invoicePaid"
+label = "An invoice is paid"
+description = "Fires once for each invoice that becomes paid, stamped with when it was paid."
+status_mapping = [{ upstream = "paid", suggested_local = "done" }]
+default_workflow = { name = "Stripe: paid invoices", default_cron_from_minutes = 5 }
+
+[[connector.triggers]]
+type = "invoicePaymentFailed"
+label = "An invoice payment fails"
+description = "Fires once for each failed payment attempt on an open invoice, and again for each failed retry."
+status_mapping = [{ upstream = "open", suggested_local = "todo" }]
+default_workflow = { name = "Stripe: failed invoice payments", default_cron_from_minutes = 15 }
+
+[[connector.actions]]
+type = "createCustomer"
+label = "Create a customer"
+description = "Create a customer. Identical inputs within 24 hours return the first customer rather than a second one."
+outputs = [{ key = "id", description = "The new customer id, cus_…" }, { key = "email", description = "Email as saved, or null" }, { key = "name", description = "Name as saved, or null" }, { key = "description", description = "Description as saved, or null" }, { key = "created", description = "When it was created, ISO 8601" }, { key = "metadata", description = "The metadata object as stored" }, { key = "livemode", type = "boolean", description = "False for a sandbox customer" }, { key = "url", description = "Where to open it in the dashboard" }]
+
+[[connector.actions.inputs]]
+key = "email"
+label = "Email"
+description = "Up to 512 characters, shown in the dashboard."
+
+[[connector.actions.inputs]]
+key = "name"
+label = "Name"
+description = "Full or business name, up to 256 characters."
+
+[[connector.actions.inputs]]
+key = "description"
+label = "Description"
+description = "Free text shown alongside the customer."
+
+[[connector.actions.inputs]]
+key = "metadata"
+label = "Metadata"
+type = "json"
+description = "A JSON object of string values, up to 50 keys of 40 characters with values of 500."
+
+[[connector.actions]]
+type = "getCustomer"
+label = "Get a customer"
+description = "Read a customer by id. A deleted customer comes back with deleted true and little else."
+outputs = [{ key = "id", description = "Customer id, cus_…" }, { key = "email", description = "Email address, or null" }, { key = "name", description = "Full or business name, or null" }, { key = "description", description = "Free text shown alongside the customer" }, { key = "phone", description = "Phone number, or null" }, { key = "currency", description = "Three-letter currency of recurring billing, or null" }, { key = "balance", type = "number", description = "Current balance in the smallest currency unit; negative is credit" }, { key = "delinquent", type = "boolean", description = "Whether the latest invoice is unpaid past due" }, { key = "created", description = "When the customer was created, ISO 8601" }, { key = "metadata", description = "The metadata object as stored" }, { key = "livemode", type = "boolean", description = "False for a sandbox customer" }, { key = "url", description = "Where to open it in the dashboard" }, { key = "deleted", type = "boolean", description = "True when the customer was deleted" }]
+
+[[connector.actions.inputs]]
+key = "customer"
+label = "Customer"
+required = true
+description = "Customer id such as cus_NffrFeUfNV2Hib."
+
+[[connector.actions]]
+type = "listCharges"
+label = "List recent charges"
+description = "The most recent charges, newest first. Amounts are integers in the smallest currency unit."
+outputs = [{ key = "charges", description = "One entry per charge: id, amount, amountRefunded, currency, status, paid, refunded, captured, customer, paymentIntent, description, receiptUrl, failureCode, failureMessage, created, livemode" }, { key = "hasMore", type = "boolean", description = "Whether another page follows the last id" }]
+
+[[connector.actions.inputs]]
+key = "limit"
+label = "Maximum"
+type = "number"
+description = "How many to return, 1 to 100. Defaults to 10."
+
+[[connector.actions.inputs]]
+key = "customer"
+label = "Customer"
+description = "Only this customer’s charges. Blank for all."
+
+[[connector.actions.inputs]]
+key = "startingAfter"
+label = "Starting after"
+description = "A charge id from an earlier page, to fetch the next one."
+
+[[connector.actions]]
+type = "createRefund"
+label = "Refund a payment"
+description = "Refund a payment intent or charge, in full or for an amount in the smallest currency unit. Identical inputs within 24 hours return the first refund."
+outputs = [{ key = "id", description = "Refund id, re_…" }, { key = "amount", type = "number", description = "Refunded amount in the smallest currency unit" }, { key = "currency", description = "Three-letter currency" }, { key = "status", description = "pending, requires_action, succeeded, failed or canceled" }, { key = "charge", description = "The charge refunded" }, { key = "paymentIntent", description = "The payment intent refunded, or null" }, { key = "reason", description = "The reason as saved, or null" }, { key = "failureReason", description = "Why a refund failed, or null" }, { key = "created", description = "When it was created, ISO 8601" }]
+
+[[connector.actions.inputs]]
+key = "paymentIntent"
+label = "Payment intent"
+description = "The pi_… to refund. Give this or a charge."
+
+[[connector.actions.inputs]]
+key = "charge"
+label = "Charge"
+description = "The ch_… to refund. Give this or a payment intent."
+
+[[connector.actions.inputs]]
+key = "amount"
+label = "Amount"
+type = "number"
+description = "Integer in the smallest currency unit: 1099 is 10.99 USD, 500 is 500 JPY. Omitted refunds what remains."
+
+[[connector.actions.inputs]]
+key = "reason"
+label = "Reason"
+type = "select"
+description = "duplicate, fraudulent or requested_by_customer. fraudulent adds the card to the block list."
+options = [{ value = "duplicate" }, { value = "fraudulent" }, { value = "requested_by_customer" }]
+
+[[connector.actions]]
+type = "getBalance"
+label = "Get the account balance"
+description = "The current balance of the account the key belongs to, in the smallest currency unit per currency."
+outputs = [{ key = "available", description = "Funds that can be paid out, as {amount, currency, sourceTypes} per currency" }, { key = "pending", description = "Funds not yet available, in the same shape" }, { key = "connectReserved", description = "Funds held in reserve for Connect, as {amount, currency}" }, { key = "livemode", type = "boolean", description = "False for a sandbox balance" }]
+
+[[connector.actions]]
+type = "listCustomers"
+label = "List customers"
+description = "Customers newest first, optionally only those with one exact email address."
+outputs = [{ key = "customers", description = "One entry per customer: id, email, name, description, phone, currency, balance, delinquent, created, metadata, deleted, livemode, url" }, { key = "hasMore", type = "boolean", description = "Whether another page follows the last id" }]
+
+[[connector.actions.inputs]]
+key = "limit"
+label = "Maximum"
+type = "number"
+description = "How many to return, 1 to 100. Defaults to 10."
+
+[[connector.actions.inputs]]
+key = "email"
+label = "Email"
+description = "Exact, case-sensitive email address to filter by."
+
+[[connector.actions.inputs]]
+key = "startingAfter"
+label = "Starting after"
+description = "A customer id from an earlier page, to fetch the next one."

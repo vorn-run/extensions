@@ -1,0 +1,221 @@
+id = "ollama"
+name = "Ollama"
+version = "0.1.1"
+api = "vorn:connector@1"
+publisher = "Vorn"
+description = "Trigger workflows when a local Ollama model is added, updated or loaded into memory, and chat, generate, embed, and list, show, pull, copy or delete models from a step."
+
+[icon]
+view_box = "0 0 24 24"
+paths = ["M9 8H15A5 5 0 0 1 20 13V17A5 5 0 0 1 15 22H9A5 5 0 0 1 4 17V13A5 5 0 0 1 9 8ZM6 3.5A1.5 1.5 0 0 1 7.5 2A1.5 1.5 0 0 1 9 3.5V10H6ZM15 3.5A1.5 1.5 0 0 1 16.5 2A1.5 1.5 0 0 1 18 3.5V10H15ZM8.3 14A1.2 1.2 0 0 0 10.7 14A1.2 1.2 0 0 0 8.3 14ZM13.3 14A1.2 1.2 0 0 0 15.7 14A1.2 1.2 0 0 0 13.3 14ZM11.25 17.5A1.25 1.25 0 0 0 10 18.75A1.25 1.25 0 0 0 11.25 20H12.75A1.25 1.25 0 0 0 14 18.75A1.25 1.25 0 0 0 12.75 17.5Z"]
+
+[service]
+command = ["node", "index.js"]
+
+[checks]
+command = ["node", "index.js", "--check"]
+
+[declares]
+network = ["localhost"]
+network_from = ["OLLAMA_HOST"]
+
+[connector.auth]
+rung = "none"
+
+[[connector.triggers]]
+type = "modelChanged"
+label = "A model was added or updated"
+description = "Fires once per model build from GET /api/tags: a new name, or a pull that changed a digest. The first poll delivers every model present."
+default_workflow = { name = "Ollama: added or updated models", default_cron_from_minutes = 15 }
+
+[[connector.triggers]]
+type = "modelLoaded"
+label = "A model was loaded into memory"
+description = "Fires when a model appears in GET /api/ps with an expiry not yet seen. Every request extends the expiry, so a busy model fires again on each poll; poll slowly."
+default_workflow = { name = "Ollama: loaded models", default_cron_from_minutes = 5 }
+
+[[connector.actions]]
+type = "chat"
+label = "Chat"
+description = "Generate the next assistant message of a conversation with POST /api/chat. Every call runs a generation."
+outputs = [{ key = "content", description = "The assistant message text" }, { key = "thinking", description = "The thinking text when the model produced one, else null" }, { key = "toolCalls", description = "The tool_calls array when the model made any, else null" }, { key = "doneReason", description = "stop, length or load" }, { key = "evalCount", type = "number", description = "Tokens generated in the reply" }, { key = "promptEvalCount", type = "number", description = "Prompt tokens evaluated" }, { key = "totalDuration", type = "number", description = "Whole call in nanoseconds" }, { key = "loadDuration", type = "number", description = "Loading the model, in nanoseconds" }, { key = "promptEvalDuration", type = "number", description = "Evaluating the prompt, in nanoseconds" }, { key = "evalDuration", type = "number", description = "Generating the reply, in nanoseconds" }, { key = "model", description = "The model that answered" }, { key = "raw", description = "The whole response as the server returned it" }]
+
+[[connector.actions.inputs]]
+key = "model"
+label = "Model"
+required = true
+description = "The model name in model:tag form; the tag defaults to latest. listModels returns what is present."
+
+[[connector.actions.inputs]]
+key = "messages"
+label = "Messages"
+required = true
+description = "A single user text, or a JSON array of { \"role\", \"content\" } with role system, user, assistant or tool."
+
+[[connector.actions.inputs]]
+key = "system"
+label = "System prompt"
+description = "Instructions for the model, kept apart from the conversation."
+
+[[connector.actions.inputs]]
+key = "format"
+label = "Format"
+description = "json for any valid JSON, or a JSON schema object the answer must match."
+
+[[connector.actions.inputs]]
+key = "options"
+label = "Options"
+type = "json"
+description = "Runtime options such as { \"temperature\": 0.2, \"num_predict\": 256 }."
+
+[[connector.actions.inputs]]
+key = "keepAlive"
+label = "Keep alive"
+description = "How long the model stays loaded after the reply, such as 10m; 0 unloads it at once."
+
+[[connector.actions]]
+type = "generate"
+label = "Generate a completion"
+description = "Generate a response for a prompt with POST /api/generate. Every call runs a generation."
+outputs = [{ key = "response", description = "The generated text" }, { key = "thinking", description = "The thinking text when the model produced one, else null" }, { key = "doneReason", description = "stop, length or load" }, { key = "evalCount", type = "number", description = "Tokens generated in the reply" }, { key = "promptEvalCount", type = "number", description = "Prompt tokens evaluated" }, { key = "totalDuration", type = "number", description = "Whole call in nanoseconds" }, { key = "loadDuration", type = "number", description = "Loading the model, in nanoseconds" }, { key = "promptEvalDuration", type = "number", description = "Evaluating the prompt, in nanoseconds" }, { key = "evalDuration", type = "number", description = "Generating the reply, in nanoseconds" }, { key = "model", description = "The model that answered" }, { key = "raw", description = "The whole response as the server returned it" }]
+
+[[connector.actions.inputs]]
+key = "model"
+label = "Model"
+required = true
+description = "The model name in model:tag form; the tag defaults to latest. listModels returns what is present."
+
+[[connector.actions.inputs]]
+key = "prompt"
+label = "Prompt"
+required = true
+description = "Text for the model to generate a response from."
+
+[[connector.actions.inputs]]
+key = "system"
+label = "System prompt"
+description = "Instructions for the model, kept apart from the conversation."
+
+[[connector.actions.inputs]]
+key = "format"
+label = "Format"
+description = "json for any valid JSON, or a JSON schema object the answer must match."
+
+[[connector.actions.inputs]]
+key = "options"
+label = "Options"
+type = "json"
+description = "Runtime options such as { \"temperature\": 0.2, \"num_predict\": 256 }."
+
+[[connector.actions.inputs]]
+key = "keepAlive"
+label = "Keep alive"
+description = "How long the model stays loaded after the reply, such as 10m; 0 unloads it at once."
+
+[[connector.actions]]
+type = "embed"
+label = "Generate embeddings"
+description = "Turn text into embedding vectors with POST /api/embed. The same input and model give the same vectors."
+outputs = [{ key = "embeddings", description = "One number array per input, in input order" }, { key = "count", type = "number", description = "How many vectors" }, { key = "model", description = "The model used" }, { key = "promptEvalCount", type = "number", description = "Input tokens processed" }, { key = "totalDuration", type = "number", description = "Whole call in nanoseconds" }, { key = "loadDuration", type = "number", description = "Loading the model, in nanoseconds" }, { key = "raw", description = "The whole response as the server returned it" }]
+
+[[connector.actions.inputs]]
+key = "model"
+label = "Model"
+required = true
+description = "The model name in model:tag form; the tag defaults to latest. listModels returns what is present."
+
+[[connector.actions.inputs]]
+key = "input"
+label = "Input"
+required = true
+description = "Text, or a JSON array of texts, to embed in one call."
+
+[[connector.actions.inputs]]
+key = "truncate"
+label = "Truncate"
+type = "boolean"
+description = "Truncate an input that exceeds the context window instead of failing. The server default is true."
+
+[[connector.actions]]
+type = "listModels"
+label = "List models"
+description = "List the models on the server with GET /api/tags."
+outputs = [{ key = "models", description = "Array of { name, model, modified_at, size, digest, details }" }, { key = "count", type = "number", description = "How many models" }, { key = "raw", description = "The whole response as the server returned it" }]
+
+[[connector.actions]]
+type = "showModel"
+label = "Show a model"
+description = "Read a model’s details, capabilities, parameters, template and license with POST /api/show."
+outputs = [{ key = "model", description = "The model name asked for; the reply carries none" }, { key = "details", description = "{ parent_model, format, family, families, parameter_size, quantization_level }" }, { key = "capabilities", description = "Array such as completion, tools, vision, embedding" }, { key = "modifiedAt", description = "When the model was last modified, ISO 8601" }, { key = "parameters", description = "Model parameter settings as text" }, { key = "template", description = "The prompt template" }, { key = "license", description = "The license text" }, { key = "modelInfo", description = "Additional model metadata" }, { key = "raw", description = "The whole response as the server returned it" }]
+
+[[connector.actions.inputs]]
+key = "model"
+label = "Model"
+required = true
+description = "The model name in model:tag form; the tag defaults to latest. listModels returns what is present."
+
+[[connector.actions.inputs]]
+key = "verbose"
+label = "Verbose"
+type = "boolean"
+description = "Include the large fields, such as the full tokenizer, in modelInfo."
+
+[[connector.actions]]
+type = "listRunningModels"
+label = "List running models"
+description = "List the models loaded into memory with GET /api/ps."
+outputs = [{ key = "models", description = "Array of { name, model, size, digest, details, expires_at, size_vram, context_length }" }, { key = "count", type = "number", description = "How many models are loaded" }, { key = "raw", description = "The whole response as the server returned it" }]
+
+[[connector.actions]]
+type = "version"
+label = "Get the server version"
+description = "Read the server version with GET /api/version. The live check probes this."
+outputs = [{ key = "version", description = "The server version, such as 0.12.6" }]
+
+[[connector.actions]]
+type = "pullModel"
+label = "Pull a model"
+description = "Download a model from the library with POST /api/pull. Downloads, so it is slow and not repeatable in a live check."
+outputs = [{ key = "status", description = "The final status, success when the model is present" }, { key = "raw", description = "The whole response as the server returned it" }]
+
+[[connector.actions.inputs]]
+key = "model"
+label = "Model"
+required = true
+description = "The model name in model:tag form; the tag defaults to latest. listModels returns what is present."
+
+[[connector.actions.inputs]]
+key = "insecure"
+label = "Insecure"
+type = "boolean"
+description = "Allow downloading over an insecure connection."
+
+[[connector.actions]]
+type = "deleteModel"
+label = "Delete a model"
+description = "Delete a model and its data with DELETE /api/delete. A second call answers 404."
+outputs = [{ key = "deleted", type = "boolean", description = "True once the server answered 200" }, { key = "model", description = "The model that was deleted" }]
+
+[[connector.actions.inputs]]
+key = "model"
+label = "Model"
+required = true
+description = "The model name in model:tag form; the tag defaults to latest. listModels returns what is present."
+
+[[connector.actions]]
+type = "copyModel"
+label = "Copy a model"
+description = "Create a new name for an existing model with POST /api/copy. Creates a tag, so it is not repeatable."
+outputs = [{ key = "copied", type = "boolean", description = "True once the server answered 200" }, { key = "source", description = "The name copied from" }, { key = "destination", description = "The name created" }]
+
+[[connector.actions.inputs]]
+key = "source"
+label = "Source"
+required = true
+description = "Existing model name to copy from."
+
+[[connector.actions.inputs]]
+key = "destination"
+label = "Destination"
+required = true
+description = "New model name to create."

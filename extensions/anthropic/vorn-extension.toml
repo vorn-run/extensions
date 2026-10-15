@@ -1,0 +1,170 @@
+id = "anthropic"
+name = "Anthropic"
+version = "0.1.1"
+api = "vorn:connector@1"
+publisher = "Vorn"
+description = "Trigger workflows when a message batch finishes or a model becomes available, and create messages, count tokens, list models and run message batches from a step."
+
+[icon]
+view_box = "0 0 24 24"
+paths = ["M9 3 15 3 22.5 21 16.5 21z", "M1.5 21 7.5 21 12.5 8.5 9.5 3.8z"]
+
+[service]
+command = ["node", "index.js"]
+
+[checks]
+command = ["node", "index.js", "--check"]
+
+[declares]
+network = ["api.anthropic.com"]
+
+[connector.auth]
+rung = "key"
+keys = ["apiKey"]
+
+[[connector.triggers]]
+type = "batchEnded"
+label = "A message batch finished"
+description = "Fires once for each message batch whose processing has ended since the last poll, oldest first. Read the results with getBatchResults."
+default_workflow = { name = "Anthropic: finished batches", default_cron_from_minutes = 5 }
+
+[[connector.triggers]]
+type = "newModel"
+label = "A model became available"
+description = "Fires once for each model released since the last poll, oldest first. The first poll looks 30 days back."
+default_workflow = { name = "Anthropic: new models", default_cron_from_minutes = 60 }
+
+[[connector.actions]]
+type = "createMessage"
+label = "Create a message"
+description = "Send a conversation to a model and get its reply. Every call bills a generation."
+outputs = [{ key = "id", description = "Message id, msg_…" }, { key = "model", description = "The model that answered" }, { key = "text", description = "The text of the first text block; empty when the model answered with a tool call alone" }, { key = "stopReason", description = "end_turn, max_tokens, stop_sequence, tool_use, pause_turn, refusal or model_context_window_exceeded" }, { key = "usage", description = "{ input_tokens, output_tokens, cache_creation_input_tokens, cache_read_input_tokens }" }, { key = "raw", description = "The whole response, with every content block and stop_details" }]
+
+[[connector.actions.inputs]]
+key = "model"
+label = "Model"
+description = "The model that will complete your prompt. Defaults to claude-sonnet-5."
+
+[[connector.actions.inputs]]
+key = "messages"
+label = "Messages"
+required = true
+description = "Prompt text, sent as one user turn, or a JSON array of { \"role\", \"content\" } turns."
+
+[[connector.actions.inputs]]
+key = "system"
+label = "System prompt"
+description = "Context and instructions for the model, kept apart from the conversation."
+
+[[connector.actions.inputs]]
+key = "maxTokens"
+label = "Maximum tokens"
+type = "number"
+description = "The most tokens to generate before stopping; the model may stop sooner. Defaults to 1024."
+
+[[connector.actions.inputs]]
+key = "temperature"
+label = "Temperature"
+type = "number"
+description = "Randomness from 0.0 to 1.0. Leave unset for the default."
+
+[[connector.actions.inputs]]
+key = "tools"
+label = "Tools"
+type = "json"
+description = "A JSON array of tool definitions, each { \"name\", \"description\", \"input_schema\" }."
+
+[[connector.actions.inputs]]
+key = "stopSequences"
+label = "Stop sequences"
+type = "json"
+description = "A JSON array of strings that end generation when the model emits one."
+
+[[connector.actions]]
+type = "countTokens"
+label = "Count tokens"
+description = "Count the tokens a conversation and system prompt would use, without creating a message."
+outputs = [{ key = "inputTokens", type = "number", description = "Tokens across the messages, system prompt and tools" }]
+
+[[connector.actions.inputs]]
+key = "model"
+label = "Model"
+description = "The model that will complete your prompt. Defaults to claude-sonnet-5."
+
+[[connector.actions.inputs]]
+key = "messages"
+label = "Messages"
+required = true
+description = "Prompt text, sent as one user turn, or a JSON array of { \"role\", \"content\" } turns."
+
+[[connector.actions.inputs]]
+key = "system"
+label = "System prompt"
+description = "Context and instructions for the model, kept apart from the conversation."
+
+[[connector.actions]]
+type = "listModels"
+label = "List models"
+description = "The models the key can use, newest release first."
+outputs = [{ key = "models", description = "One entry per model: id, display_name, created_at, max_input_tokens, max_tokens, capabilities" }, { key = "count", type = "number", description = "How many models came back" }]
+
+[[connector.actions]]
+type = "getModel"
+label = "Get a model"
+description = "Read one model by id, or resolve an alias to its model id."
+outputs = [{ key = "id", description = "The resolved model id" }, { key = "displayName", description = "Human-readable name" }, { key = "createdAt", description = "Release time, RFC 3339; an epoch when unknown" }, { key = "maxInputTokens", type = "number", description = "Context window in tokens" }, { key = "maxTokens", type = "number", description = "Most output tokens per message" }, { key = "capabilities", description = "What the model supports, such as batch and thinking" }, { key = "raw", description = "The whole model as the API returned it" }]
+
+[[connector.actions.inputs]]
+key = "modelId"
+label = "Model"
+required = true
+description = "A model id or alias, such as claude-sonnet-5."
+
+[[connector.actions]]
+type = "createMessageBatch"
+label = "Create a message batch"
+description = "Queue up to 100,000 message requests for asynchronous processing. Two calls queue two batches."
+outputs = [{ key = "id", description = "Batch id, msgbatch_…" }, { key = "processingStatus", description = "in_progress, canceling or ended" }, { key = "requestCounts", description = "{ processing, succeeded, errored, canceled, expired }" }, { key = "createdAt", description = "When the batch was created, RFC 3339" }, { key = "endedAt", description = "When processing ended; null until then" }, { key = "expiresAt", description = "24 hours after creation, when unfinished requests expire" }, { key = "cancelInitiatedAt", description = "When cancellation was asked for, RFC 3339; null when it never was" }, { key = "resultsUrl", description = "Where the results stream from once processing has ended; null until then" }, { key = "raw", description = "The whole batch as the API returned it" }]
+
+[[connector.actions.inputs]]
+key = "requests"
+label = "Requests"
+type = "json"
+required = true
+description = "A JSON array of { \"custom_id\", \"params\" } where params is a full createMessage body: model, max_tokens, messages, …."
+
+[[connector.actions]]
+type = "getMessageBatch"
+label = "Get a message batch"
+description = "Read a batch and its request counts; poll it until processingStatus is ended."
+outputs = [{ key = "id", description = "Batch id, msgbatch_…" }, { key = "processingStatus", description = "in_progress, canceling or ended" }, { key = "requestCounts", description = "{ processing, succeeded, errored, canceled, expired }" }, { key = "createdAt", description = "When the batch was created, RFC 3339" }, { key = "endedAt", description = "When processing ended; null until then" }, { key = "expiresAt", description = "24 hours after creation, when unfinished requests expire" }, { key = "cancelInitiatedAt", description = "When cancellation was asked for, RFC 3339; null when it never was" }, { key = "resultsUrl", description = "Where the results stream from once processing has ended; null until then" }, { key = "raw", description = "The whole batch as the API returned it" }]
+
+[[connector.actions.inputs]]
+key = "batchId"
+label = "Batch"
+required = true
+description = "The message batch id, msgbatch_…"
+
+[[connector.actions]]
+type = "getBatchResults"
+label = "Get batch results"
+description = "Read the results of an ended batch, one entry per request, matched by custom_id rather than by order."
+outputs = [{ key = "results", description = "One entry per request: { custom_id, result } where result.type is succeeded (with result.message), errored (with result.error), canceled or expired" }, { key = "count", type = "number", description = "How many results came back" }]
+
+[[connector.actions.inputs]]
+key = "batchId"
+label = "Batch"
+required = true
+description = "The message batch id, msgbatch_…"
+
+[[connector.actions]]
+type = "cancelMessageBatch"
+label = "Cancel a message batch"
+description = "Ask for a batch to stop; it enters canceling and requests already running may still finish."
+outputs = [{ key = "id", description = "Batch id, msgbatch_…" }, { key = "processingStatus", description = "in_progress, canceling or ended" }, { key = "requestCounts", description = "{ processing, succeeded, errored, canceled, expired }" }, { key = "createdAt", description = "When the batch was created, RFC 3339" }, { key = "endedAt", description = "When processing ended; null until then" }, { key = "expiresAt", description = "24 hours after creation, when unfinished requests expire" }, { key = "cancelInitiatedAt", description = "When cancellation was asked for, RFC 3339; null when it never was" }, { key = "resultsUrl", description = "Where the results stream from once processing has ended; null until then" }, { key = "raw", description = "The whole batch as the API returned it" }]
+
+[[connector.actions.inputs]]
+key = "batchId"
+label = "Batch"
+required = true
+description = "The message batch id, msgbatch_…"

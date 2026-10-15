@@ -47,6 +47,7 @@
     "vitest": "^4.1.10"
   },
   "vorn": {
+    "publisher": "Vorn",
     "category": "Communication",
     "keywords": [
       "discord",
@@ -59,6 +60,8 @@
       "chat"
     ],
     "auth": "Paste a bot token from the Developer Portal (Bot tab, Reset Token). There is no Discord CLI to sign in with.",
-    "packs": true
+    "hosts": [
+      "discord.com"
+    ]
   }
 }

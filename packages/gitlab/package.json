@@ -34,6 +34,7 @@
     "vitest": "^4.1.10"
   },
   "vorn": {
+    "publisher": "Vorn",
     "category": "Development",
     "keywords": [
       "gitlab",
@@ -45,6 +46,11 @@
       "repositories"
     ],
     "auth": "Borrows the GitLab CLI's login — `glab auth login` is all it needs — or takes a personal access token if you would rather paste one.",
-    "packs": true
+    "hosts": [
+      "gitlab.com"
+    ],
+    "hostsFrom": [
+      "GITLAB_BASE_URL"
+    ]
   }
 }

@@ -46,6 +46,7 @@
     "vitest": "^4.1.10"
   },
   "vorn": {
+    "publisher": "Vorn",
     "category": "Finance",
     "keywords": [
       "stripe",
@@ -57,6 +58,9 @@
       "charges"
     ],
     "auth": "Borrows the Stripe CLI's login — `stripe login` is all it needs — or takes a restricted or secret API key if you would rather paste one.",
-    "packs": true
+    "hosts": [
+      "api.stripe.com",
+      "files.stripe.com"
+    ]
   }
 }

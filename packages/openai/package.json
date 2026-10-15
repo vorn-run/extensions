@@ -47,6 +47,7 @@
     "vitest": "^4.1.10"
   },
   "vorn": {
+    "publisher": "Vorn",
     "category": "AI",
     "keywords": [
       "openai",
@@ -61,6 +62,8 @@
       "fine-tuning"
     ],
     "auth": "Paste an API key from https://platform.openai.com/api-keys. There is no OpenAI CLI to sign in with.",
-    "packs": true
+    "hosts": [
+      "api.openai.com"
+    ]
   }
 }

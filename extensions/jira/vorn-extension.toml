@@ -1,0 +1,277 @@
+id = "jira"
+name = "Jira"
+version = "0.1.1"
+api = "vorn:connector@1"
+publisher = "Vorn"
+description = "Trigger workflows when a Jira Cloud issue is created, updated or moved to a status, and create, edit, transition, comment on, assign, read or search issues from a step."
+
+[icon]
+view_box = "0 0 24 24"
+paths = ["M16 9 23 16 16 23 9 16 10.75 14.25 12.5 16 16 12.5 14.25 10.75z", "M12 5 15.5 8.5 13.25 10.75 15 12.5 12.5 15 10.75 13.25 8.5 15.5 5 12 6.75 10.25 8.5 12 12 8.5 10.25 6.75z", "M8 1 11.5 4.5 9.25 6.75 11 8.5 8.5 11 6.75 9.25 4.5 11.5 1 8z"]
+
+[service]
+command = ["node", "index.js"]
+
+[checks]
+command = ["node", "index.js", "--check"]
+
+[declares]
+network = ["*.atlassian.net", "api.atlassian.com"]
+network_from = ["JIRA_SITE_URL"]
+
+[connector.auth]
+rung = "key"
+keys = ["apiToken"]
+
+[[connector.triggers]]
+type = "newIssue"
+label = "An issue is created"
+description = "Fires once for each issue created since the last poll, oldest first, within the project and JQL filter from the settings."
+default_workflow = { name = "Jira: new issues", default_cron_from_minutes = 5 }
+
+[[connector.triggers]]
+type = "issueUpdated"
+label = "An issue is updated"
+description = "Fires for each change to an issue since the last poll, keyed by issue and update time, so an issue edited twice fires twice."
+default_workflow = { name = "Jira: updated issues", default_cron_from_minutes = 5 }
+
+[[connector.triggers]]
+type = "issueTransitioned"
+label = "An issue moves to a status"
+description = "Fires when an issue is transitioned into the status named in the settings. JQL records that the change happened, not when, so the issue's last update stands in as the time."
+default_workflow = { name = "Jira: issues moved to a status", default_cron_from_minutes = 5 }
+
+[[connector.actions]]
+type = "createIssue"
+label = "Create an issue"
+description = "Create one issue in a project. The description is written as plain text and converted to Atlassian Document Format."
+outputs = [{ key = "id", description = "The issue id" }, { key = "key", description = "The issue key, such as EX-12" }, { key = "url", description = "Where to open it: <site>/browse/<key>" }, { key = "self", description = "The REST URL of the issue" }]
+
+[[connector.actions.inputs]]
+key = "projectKey"
+label = "Project"
+required = true
+description = "The project key, such as EX."
+
+[[connector.actions.inputs]]
+key = "issueType"
+label = "Issue type"
+required = true
+description = "The issue type name: Bug, Task, Story, Epic or Subtask."
+
+[[connector.actions.inputs]]
+key = "summary"
+label = "Summary"
+required = true
+description = "The one-line summary."
+
+[[connector.actions.inputs]]
+key = "description"
+label = "Description"
+description = "The description as plain text; blank lines start new paragraphs. An ADF document as JSON is sent as it is."
+
+[[connector.actions.inputs]]
+key = "assigneeAccountId"
+label = "Assignee account id"
+description = "The account id of the assignee, from getCurrentUser or the issue's assignee output."
+
+[[connector.actions.inputs]]
+key = "labels"
+label = "Labels"
+description = "Comma-separated labels, such as bugfix,triaged. Labels cannot contain spaces."
+
+[[connector.actions.inputs]]
+key = "priority"
+label = "Priority"
+description = "The priority name: Highest, High, Medium, Low or Lowest."
+
+[[connector.actions.inputs]]
+key = "parentKey"
+label = "Parent issue"
+description = "The parent issue key, for a subtask or a child of an epic."
+
+[[connector.actions.inputs]]
+key = "fields"
+label = "Fields"
+type = "json"
+description = "A JSON object of issue fields to set as well, keyed by field id, such as {\"customfield_10000\":\"value\",\"duedate\":\"2026-09-30\"}."
+
+[[connector.actions]]
+type = "updateIssue"
+label = "Update an issue"
+description = "Edit the summary, description or any fields of an issue; the rest stays as it was. Transitions are ignored here, use transitionIssue."
+outputs = [{ key = "id", description = "The issue id" }, { key = "key", description = "The issue key, such as EX-12" }, { key = "url", description = "Where to open it: <site>/browse/<key>" }, { key = "issue", description = "The issue after the edit, as Jira returns it" }]
+
+[[connector.actions.inputs]]
+key = "issueKey"
+label = "Issue"
+required = true
+description = "The issue key (EX-12) or id."
+
+[[connector.actions.inputs]]
+key = "summary"
+label = "Summary"
+description = "A new summary line."
+
+[[connector.actions.inputs]]
+key = "description"
+label = "Description"
+description = "The description as plain text; blank lines start new paragraphs. An ADF document as JSON is sent as it is."
+
+[[connector.actions.inputs]]
+key = "fields"
+label = "Fields"
+type = "json"
+description = "A JSON object of issue fields to set, keyed by field id, such as {\"customfield_10000\":\"value\",\"duedate\":\"2026-09-30\"}."
+
+[[connector.actions.inputs]]
+key = "update"
+label = "Update operations"
+type = "json"
+description = "A JSON object of update operations, such as {\"labels\":[{\"add\":\"triaged\"}]} or {\"components\":[{\"remove\":{\"name\":\"UI\"}}]}."
+
+[[connector.actions.inputs]]
+key = "notifyUsers"
+label = "Notify users"
+type = "boolean"
+description = "Send the usual edit notifications. Defaults to true; false needs project administer permission or is ignored."
+
+[[connector.actions]]
+type = "transitionIssue"
+label = "Transition an issue"
+description = "Move an issue through a workflow transition, by transition id or name, optionally with a comment and screen fields."
+outputs = [{ key = "key", description = "The issue key or id that was transitioned" }, { key = "id", description = "The transition id taken" }, { key = "name", description = "The transition name, when it was resolved" }, { key = "to", description = "The status the issue moved to, when known" }]
+
+[[connector.actions.inputs]]
+key = "issueKey"
+label = "Issue"
+required = true
+description = "The issue key (EX-12) or id."
+
+[[connector.actions.inputs]]
+key = "transition"
+label = "Transition"
+required = true
+description = "A transition id (31) or name (Done). A name is matched against the transitions the issue offers, then against their target statuses."
+
+[[connector.actions.inputs]]
+key = "comment"
+label = "Comment"
+description = "A plain-text comment to add with the transition."
+
+[[connector.actions.inputs]]
+key = "fields"
+label = "Fields"
+type = "json"
+description = "A JSON object of fields the transition screen asks for, such as {\"resolution\":{\"name\":\"Done\"}}."
+
+[[connector.actions]]
+type = "addComment"
+label = "Add a comment"
+description = "Post a comment on an issue. Plain text is converted to Atlassian Document Format."
+outputs = [{ key = "id", description = "The comment id" }, { key = "created", description = "When it was posted, ISO 8601" }, { key = "updated", description = "When it last changed, ISO 8601" }, { key = "author", description = "{ accountId, displayName } of the account that posted it" }, { key = "self", description = "The REST URL of the comment" }, { key = "url", description = "Where to open it: <site>/browse/<key>?focusedCommentId=<id>" }]
+
+[[connector.actions.inputs]]
+key = "issueKey"
+label = "Issue"
+required = true
+description = "The issue key (EX-12) or id."
+
+[[connector.actions.inputs]]
+key = "body"
+label = "Comment"
+required = true
+description = "The comment as plain text; blank lines start new paragraphs. An ADF document as JSON is sent as it is."
+
+[[connector.actions]]
+type = "assignIssue"
+label = "Assign an issue"
+description = "Assign an issue to an account, or unassign it."
+outputs = [{ key = "key", description = "The issue key or id" }, { key = "accountId", description = "The account id now assigned, or null" }]
+
+[[connector.actions.inputs]]
+key = "issueKey"
+label = "Issue"
+required = true
+description = "The issue key (EX-12) or id."
+
+[[connector.actions.inputs]]
+key = "accountId"
+label = "Account id"
+description = "The assignee's account id. Blank or null unassigns; -1 assigns the project's default assignee."
+
+[[connector.actions]]
+type = "getIssue"
+label = "Get an issue"
+description = "Read one issue by key or id, with its main fields flattened and the description as plain text."
+outputs = [{ key = "id", description = "The issue id" }, { key = "key", description = "The issue key, such as EX-12" }, { key = "url", description = "Where to open it: <site>/browse/<key>" }, { key = "summary", description = "The summary line" }, { key = "status", description = "Status name, such as In Progress" }, { key = "statusCategory", description = "The status category: To Do, In Progress or Done" }, { key = "issueType", description = "Issue type name" }, { key = "priority", description = "Priority name" }, { key = "assignee", description = "{ accountId, displayName } or null" }, { key = "reporter", description = "{ accountId, displayName } or null" }, { key = "project", description = "{ id, key, name }" }, { key = "labels", description = "The labels" }, { key = "created", description = "When it was created, ISO 8601" }, { key = "updated", description = "When it last changed, ISO 8601" }, { key = "resolution", description = "Resolution name, or null while open" }, { key = "descriptionText", description = "The description flattened to plain text" }, { key = "issue", description = "The issue as Jira returns it, fields included" }]
+
+[[connector.actions.inputs]]
+key = "issueKey"
+label = "Issue"
+required = true
+description = "The issue key (EX-12) or id."
+
+[[connector.actions.inputs]]
+key = "fields"
+label = "Fields"
+description = "Comma-separated field ids to return, such as summary,status,customfield_10000. Defaults to every navigable field."
+
+[[connector.actions]]
+type = "searchIssues"
+label = "Search issues"
+description = "Run a JQL query and return the matching issues, paging until maxResults are collected."
+outputs = [{ key = "issues", description = "One entry per issue in the getIssue shape: id, key, url, summary, status, …" }, { key = "count", type = "number", description = "How many issues came back" }, { key = "isLast", type = "boolean", description = "True when no further page exists" }, { key = "nextPageToken", description = "The token for the next page, when the walk stopped before the end" }]
+
+[[connector.actions.inputs]]
+key = "jql"
+label = "JQL"
+required = true
+description = "A JQL expression, such as project = EX AND status = \"In Progress\" ORDER BY updated DESC."
+
+[[connector.actions.inputs]]
+key = "fields"
+label = "Fields"
+description = "Comma-separated field ids to return. Defaults to summary, status, issue type, priority, assignee, reporter, project, labels, created, updated and resolution."
+
+[[connector.actions.inputs]]
+key = "maxResults"
+label = "Maximum results"
+type = "number"
+description = "How many issues to return in total, 1 to 5000. Defaults to 50."
+
+[[connector.actions]]
+type = "listTransitions"
+label = "List transitions"
+description = "The workflow transitions an issue can take from its current status."
+outputs = [{ key = "transitions", description = "One entry per transition: id, name, to { id, name, statusCategory }, hasScreen, isAvailable" }, { key = "count", type = "number", description = "How many transitions the issue offers" }]
+
+[[connector.actions.inputs]]
+key = "issueKey"
+label = "Issue"
+required = true
+description = "The issue key (EX-12) or id."
+
+[[connector.actions]]
+type = "listProjects"
+label = "List projects"
+description = "The projects the account can browse, ordered by key, optionally filtered by a name or key fragment and by type."
+outputs = [{ key = "projects", description = "One entry per project: id, key, name, projectTypeKey, simplified, style, url" }, { key = "count", type = "number", description = "How many projects came back" }]
+
+[[connector.actions.inputs]]
+key = "query"
+label = "Query"
+description = "Return only projects whose key or name contains this text, case-insensitively."
+
+[[connector.actions.inputs]]
+key = "typeKey"
+label = "Project type"
+type = "select"
+description = "Limit to one project type. Blank returns every type."
+options = [{ value = "software", label = "Software" }, { value = "business", label = "Business" }, { value = "service_desk", label = "Service management" }]
+
+[[connector.actions]]
+type = "getCurrentUser"
+label = "Get the current user"
+description = "The account the API token belongs to, with its account id and time zone."
+outputs = [{ key = "accountId", description = "The account id, as assignee fields take it" }, { key = "accountType", description = "atlassian, app or customer" }, { key = "displayName", description = "The display name" }, { key = "emailAddress", description = "The email address, when the account does not hide it" }, { key = "active", type = "boolean", description = "Whether the account is active" }, { key = "timeZone", description = "The account's time zone, which JQL dates are read in" }, { key = "locale", description = "The account's locale" }, { key = "self", description = "The REST URL of the user" }]

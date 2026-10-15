@@ -48,6 +48,7 @@
     "vitest": "^4.1.10"
   },
   "vorn": {
+    "publisher": "Vorn",
     "category": "Social",
     "keywords": [
       "x",
@@ -58,6 +59,10 @@
       "social"
     ],
     "auth": "Paste the four OAuth 1.0a credentials of an X developer app with Read and Write permission; there is no X CLI to borrow a login from.",
-    "packs": true
+    "hosts": [
+      "api.x.com",
+      "api.twitter.com",
+      "upload.twitter.com"
+    ]
   }
 }

@@ -37,6 +37,7 @@
     "vitest": "^4.1.10"
   },
   "vorn": {
+    "publisher": "Vorn",
     "category": "Communication",
     "keywords": [
       "slack",
@@ -48,6 +49,9 @@
       "workspace"
     ],
     "auth": "Uses a bot token from a Slack app installed to the workspace: api.slack.com/apps, OAuth & Permissions, Bot User OAuth Token.",
-    "packs": true
+    "hosts": [
+      "slack.com",
+      "files.slack.com"
+    ]
   }
 }

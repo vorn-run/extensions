@@ -46,6 +46,7 @@
     "vitest": "^4.1.10"
   },
   "vorn": {
+    "publisher": "Vorn",
     "category": "Productivity",
     "keywords": [
       "trello",
@@ -56,6 +57,8 @@
       "tasks"
     ],
     "auth": "Paste a Power-Up API key from trello.com/power-ups/admin and the member token its authorization page grants for read and write. There is no Trello CLI to sign in with.",
-    "packs": true
+    "hosts": [
+      "api.trello.com"
+    ]
   }
 }

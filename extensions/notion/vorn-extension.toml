@@ -1,0 +1,88 @@
+id = "notion"
+name = "Notion"
+version = "0.1.3"
+api = "vorn:connector@1"
+publisher = "Vorn"
+description = "Trigger workflows from Notion database pages, and create or update them."
+
+[icon]
+view_box = "0 0 24 24"
+paths = ["M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.98-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466z", "M5.25 8.058v13.904c0 .747.373 1.027 1.214.98L20.99 22.1c.841-.046.935-.56.935-1.167V7.122c0-.606-.233-.933-.748-.887l-14.7.855c-.56.047-.746.327-.746.933zm14.28.7c.093.42 0 .84-.42.888l-.68.135v9.966c-.59.317-1.132.498-1.588.498-.727 0-.909-.227-1.453-.907l-4.451-6.992v6.765l1.408.317s0 .816-1.136.816l-3.132.181c-.09-.181 0-.635.317-.726l.818-.226V9.801L8.06 9.71c-.09-.42.137-1.021.784-1.067l3.359-.227 4.678 7.148V9.393l-1.181-.136c-.091-.5.273-.863.727-.908z"]
+
+[service]
+command = ["node", "index.js"]
+
+[checks]
+command = ["node", "index.js", "--check"]
+
+[declares]
+network = ["api.notion.com"]
+
+[connector.auth]
+rung = "key"
+keys = ["token"]
+
+[[connector.triggers]]
+type = "pageChanged"
+label = "A page is created or changed"
+description = "Fires once per page in the database that Vorn has not seen at this time. Deleted and moved pages produce no event — polling only sees what still matches."
+status_mapping = [{ upstream = "Not started", suggested_local = "todo" }, { upstream = "To-do", suggested_local = "todo" }, { upstream = "Backlog", suggested_local = "todo" }, { upstream = "In progress", suggested_local = "in_progress" }, { upstream = "In review", suggested_local = "in_review" }, { upstream = "Doing", suggested_local = "in_progress" }, { upstream = "Done", suggested_local = "done" }, { upstream = "Complete", suggested_local = "done" }, { upstream = "Shipped", suggested_local = "done" }, { upstream = "Cancelled", suggested_local = "cancelled" }, { upstream = "Archived", suggested_local = "cancelled" }]
+default_workflow = { name = "Notion: database pages", default_cron_from_minutes = 5 }
+
+[[connector.actions]]
+type = "createPage"
+label = "Create a page"
+description = "Add a page to the configured data source."
+outputs = [{ key = "id", description = "The new page id" }, { key = "url", description = "Where to open it" }]
+
+[[connector.actions.inputs]]
+key = "title"
+label = "Title"
+required = true
+
+[[connector.actions.inputs]]
+key = "markdown"
+label = "Body"
+description = "Paragraphs and # headings."
+
+[[connector.actions.inputs]]
+key = "properties"
+label = "Properties"
+description = "JSON object of Notion property values, in the API’s own shape."
+
+[[connector.actions]]
+type = "updatePage"
+label = "Update a page"
+description = "Set properties on an existing page."
+outputs = [{ key = "url", description = "Where to open it" }]
+
+[[connector.actions.inputs]]
+key = "pageId"
+label = "Page"
+required = true
+description = "Page URL or id."
+
+[[connector.actions.inputs]]
+key = "title"
+label = "Title"
+
+[[connector.actions.inputs]]
+key = "properties"
+label = "Properties"
+description = "JSON object of Notion property values."
+
+[[connector.actions]]
+type = "findPages"
+label = "Find pages"
+description = "Query the configured data source and return the pages it matches."
+outputs = [{ key = "count", type = "number", description = "How many pages came back" }, { key = "pages", description = "id, url, title and status for each" }, { key = "truncated", type = "boolean", description = "True when Notion hit its 10,000-result ceiling" }]
+
+[[connector.actions.inputs]]
+key = "filter"
+label = "Filter"
+description = "A JSON filter in Notion's own syntax."
+
+[[connector.actions.inputs]]
+key = "limit"
+label = "Maximum results"
+type = "number"

@@ -24,10 +24,9 @@ import { catalogEntry, readTemplateFiles } from './templates.mjs'
 const CATALOG_VERSION = 1
 /** Written by `yarn conformance`, committed, and quoted here as the verified badge. */
 const RECEIPT_FILE = 'verified.json'
-/** Where a release carries a connector's pack, under the tag that published it. */
-const PACK_URL = (dir, id, version) =>
-  `https://github.com/vorn-run/connectors/releases/download/` +
-  `${dir}-v${version}/${id}-${version}.vorn.tgz`
+/** The repository Vorn installs a connector from, and the folder `build-extensions.mjs` writes it to. */
+const GIT_URL = 'https://github.com/vorn-run/connectors.git'
+const FOLDER = (id) => `extensions/${id}`
 
 /** Trim an action's inputs down to what someone deciding would want to see. */
 function summarize(entries) {
@@ -105,10 +104,12 @@ async function entryFor(dir) {
     // The rung the connector itself declares; the line above is the prose for it.
     ...(manifest.auth?.rung && { authRung: manifest.auth.rung }),
     ...(receipt && { verified: receipt }),
-    // Only where the release actually carries the asset: the app prefers this
-    // over the package name, so advertising one that is not there yet would
-    // turn an install that works into a download that 404s.
-    ...(listing.packs && { packUrl: PACK_URL(dir, manifest.id, pkg.version) }),
+    // Only where the folder is committed: advertising one that is not there
+    // would turn an install into a clone that finds nothing.
+    ...(existsSync(`${FOLDER(manifest.id)}/vorn-extension.toml`) && {
+      git: GIT_URL,
+      path: FOLDER(manifest.id)
+    }),
     ...(manifest.icon && { icon: manifest.icon }),
     triggers: summarize(manifest.triggers),
     actions: summarize(manifest.actions),

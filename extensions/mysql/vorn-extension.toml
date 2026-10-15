@@ -1,0 +1,216 @@
+id = "mysql"
+name = "MySQL"
+version = "0.1.1"
+api = "vorn:connector@1"
+publisher = "Vorn"
+description = "Trigger workflows from new or updated rows in a MySQL or MariaDB database, and query or write to it from a step."
+
+[icon]
+view_box = "0 0 24 24"
+paths = ["M12 3c-4.97 0-9 1.34-9 3s4.03 3 9 3 9-1.34 9-3-4.03-3-9-3z", "M3 8v9c0 1.66 4.03 3 9 3s9-1.34 9-3V8h-2v9c0 .35-2.6 1-7 1s-7-.65-7-1V8z", "M7.5 16.5v-6h1.6l2.9 3.6 2.9-3.6h1.6v6h-1.6v-3.6L12 15.6l-2.9-2.7v3.6z"]
+
+[service]
+command = ["node", "index.js"]
+
+[checks]
+command = ["node", "index.js", "--check"]
+
+[connector.auth]
+rung = "key"
+keys = ["connectionString"]
+
+[[connector.triggers]]
+type = "newRows"
+label = "New rows in a table"
+description = "Fires once per row inserted after the last seen value of the ordering column."
+default_workflow = { name = "MySQL: new rows", default_cron_from_minutes = 5 }
+
+[[connector.triggers]]
+type = "updatedRows"
+label = "Updated rows in a table"
+description = "Fires once per change to a row, tracked by its updated_at column and primary key."
+default_workflow = { name = "MySQL: updated rows", default_cron_from_minutes = 5 }
+
+[[connector.actions]]
+type = "runQuery"
+label = "Run a query"
+description = "Run one SQL statement with positional parameters; returns rows for a read and the counts for a write."
+outputs = [{ key = "rows", description = "The rows of a read, empty for a write" }, { key = "rowCount", type = "number", description = "Rows returned, or rows a write touched" }, { key = "affectedRows", type = "number", description = "Rows a write touched, 0 for a read" }, { key = "insertId", type = "number", description = "The AUTO_INCREMENT value of an insert, else 0" }, { key = "warningStatus", type = "number", description = "How many warnings the server raised" }]
+
+[[connector.actions.inputs]]
+key = "sql"
+label = "SQL"
+required = true
+description = "One SQL statement, with ? placeholders."
+
+[[connector.actions.inputs]]
+key = "params"
+label = "Parameters"
+type = "json"
+description = "Positional values for the placeholders, a JSON array."
+
+[[connector.actions]]
+type = "selectRows"
+label = "Select rows"
+description = "Read rows from a table, with an optional parameterised WHERE."
+outputs = [{ key = "rows", description = "The rows" }, { key = "rowCount", type = "number", description = "How many came back" }]
+
+[[connector.actions.inputs]]
+key = "table"
+label = "Table"
+required = true
+description = "table or db.table"
+
+[[connector.actions.inputs]]
+key = "columns"
+label = "Columns"
+type = "json"
+description = "JSON array of column names; all columns when omitted."
+
+[[connector.actions.inputs]]
+key = "where"
+label = "Where"
+description = "SQL placed after WHERE, with ? placeholders, e.g. status = ?"
+
+[[connector.actions.inputs]]
+key = "params"
+label = "Parameters"
+type = "json"
+description = "Values for the placeholders, a JSON array."
+
+[[connector.actions.inputs]]
+key = "orderBy"
+label = "Order by"
+description = "Column name to order by."
+
+[[connector.actions.inputs]]
+key = "descending"
+label = "Descending"
+type = "boolean"
+description = "Order descending; default ascending."
+
+[[connector.actions.inputs]]
+key = "limit"
+label = "Limit"
+type = "number"
+description = "Default 100, at most 1000."
+
+[[connector.actions]]
+type = "insertRow"
+label = "Insert a row"
+description = "Insert one row and return its AUTO_INCREMENT id."
+outputs = [{ key = "insertId", type = "number", description = "The AUTO_INCREMENT value, or 0" }, { key = "affectedRows", type = "number", description = "1 when a row was inserted" }]
+
+[[connector.actions.inputs]]
+key = "table"
+label = "Table"
+required = true
+description = "table or db.table"
+
+[[connector.actions.inputs]]
+key = "values"
+label = "Values"
+type = "json"
+required = true
+description = "JSON object of column: value, non-empty."
+
+[[connector.actions]]
+type = "updateRows"
+label = "Update rows"
+description = "Set columns on the rows a WHERE matches and return how many matched."
+outputs = [{ key = "affectedRows", type = "number", description = "Rows matched" }, { key = "info", type = "string", description = "The server's Rows matched / Changed / Warnings text" }]
+
+[[connector.actions.inputs]]
+key = "table"
+label = "Table"
+required = true
+description = "table or db.table"
+
+[[connector.actions.inputs]]
+key = "values"
+label = "Values"
+type = "json"
+required = true
+description = "JSON object of column: new value, non-empty."
+
+[[connector.actions.inputs]]
+key = "where"
+label = "Where"
+required = true
+description = "SQL placed after WHERE, with ? placeholders. Required, so a step cannot update every row by omission."
+
+[[connector.actions.inputs]]
+key = "params"
+label = "Parameters"
+type = "json"
+description = "Values for the where placeholders, a JSON array; bound after the SET values."
+
+[[connector.actions]]
+type = "deleteRows"
+label = "Delete rows"
+description = "Delete the rows a WHERE matches and return how many went."
+outputs = [{ key = "affectedRows", type = "number", description = "Rows deleted" }]
+
+[[connector.actions.inputs]]
+key = "table"
+label = "Table"
+required = true
+description = "table or db.table"
+
+[[connector.actions.inputs]]
+key = "where"
+label = "Where"
+required = true
+description = "SQL placed after WHERE, with ? placeholders. Required, so a step cannot delete every row by omission."
+
+[[connector.actions.inputs]]
+key = "params"
+label = "Parameters"
+type = "json"
+description = "Values for the placeholders, a JSON array."
+
+[[connector.actions]]
+type = "listTables"
+label = "List tables"
+description = "List the tables and views in a database that the user can see."
+outputs = [{ key = "tables", description = "Array of { name, type, engine, rows }" }, { key = "count", type = "number", description = "How many" }]
+
+[[connector.actions.inputs]]
+key = "database"
+label = "Database"
+description = "Defaults to the database in the connection URL."
+
+[[connector.actions]]
+type = "describeTable"
+label = "Describe a table"
+description = "List the columns of a table with their types, nullability, keys and defaults."
+outputs = [{ key = "columns", description = "Array of { name, type, dataType, nullable, key, default, extra, position }" }, { key = "count", type = "number", description = "How many" }]
+
+[[connector.actions.inputs]]
+key = "table"
+label = "Table"
+required = true
+description = "table (the URL's database) or db.table"
+
+[[connector.actions]]
+type = "countRows"
+label = "Count rows"
+description = "Count the rows in a table, optionally those a WHERE matches."
+outputs = [{ key = "count", type = "number", description = "The row count" }]
+
+[[connector.actions.inputs]]
+key = "table"
+label = "Table"
+required = true
+description = "table or db.table"
+
+[[connector.actions.inputs]]
+key = "where"
+label = "Where"
+description = "SQL placed after WHERE, with ? placeholders, e.g. status = ?"
+
+[[connector.actions.inputs]]
+key = "params"
+label = "Parameters"
+type = "json"
+description = "Values for the placeholders, a JSON array."

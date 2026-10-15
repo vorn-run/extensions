@@ -49,6 +49,7 @@
     "vitest": "^4.1.10"
   },
   "vorn": {
+    "publisher": "Vorn",
     "category": "Social",
     "keywords": [
       "rss",
@@ -60,6 +61,8 @@
       "syndication"
     ],
     "auth": "Nothing to sign in to: feeds are public, so installing the connector is the whole setup.",
-    "packs": true
+    "hostsFrom": [
+      "RSS_FEEDS"
+    ]
   }
 }

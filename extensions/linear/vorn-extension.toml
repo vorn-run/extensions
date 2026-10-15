@@ -1,0 +1,79 @@
+id = "linear"
+name = "Linear"
+version = "0.1.3"
+api = "vorn:connector@1"
+publisher = "Vorn"
+description = "Trigger workflows from Linear issues, and comment or close them from a step."
+
+[icon]
+view_box = "0 0 24 24"
+paths = ["M3.035 12.943c.207 1.98 1.07 3.904 2.587 5.421 1.517 1.517 3.441 2.38 5.42 2.587z", "M3 11.494L12.492 20.986c.806-.045 1.606-.198 2.378-.459L3.459 9.115A9.6 9.6 0 003 11.494z", "M3.867 8.11l12.009 12.009a9.6 9.6 0 001.773-1.123L4.99 6.337a9.6 9.6 0 00-1.123 1.773z", "M5.663 5.595c3.518-3.474 9.186-3.46 12.687.04 3.501 3.501 3.515 9.169.041 12.687z"]
+
+[service]
+command = ["node", "index.js"]
+
+[checks]
+command = ["node", "index.js", "--check"]
+
+[declares]
+network = ["api.linear.app"]
+
+[connector.auth]
+rung = "key"
+keys = ["apiKey"]
+
+[[connector.triggers]]
+type = "issueCreated"
+label = "An issue is created or changed"
+description = "Fires for each issue the query returns that Vorn has not seen at this time."
+status_mapping = [{ upstream = "backlog", suggested_local = "todo" }, { upstream = "unstarted", suggested_local = "todo" }, { upstream = "started", suggested_local = "in_progress" }, { upstream = "completed", suggested_local = "done" }, { upstream = "canceled", suggested_local = "cancelled" }]
+default_workflow = { name = "Linear: issues", default_cron_from_minutes = 5 }
+
+[[connector.actions]]
+type = "commentOnIssue"
+label = "Comment on an issue"
+description = "Post a comment on a Linear issue."
+outputs = [{ key = "url", description = "Where to read the comment" }]
+
+[[connector.actions.inputs]]
+key = "identifier"
+label = "Issue"
+required = true
+description = "e.g. ENG-123"
+
+[[connector.actions.inputs]]
+key = "body"
+label = "Comment"
+required = true
+
+[[connector.actions]]
+type = "createIssue"
+label = "Create an issue"
+description = "Open a new Linear issue and return its identifier and url."
+outputs = [{ key = "identifier", description = "e.g. ENG-123" }, { key = "url", description = "Where to open it" }]
+
+[[connector.actions.inputs]]
+key = "title"
+label = "Title"
+required = true
+
+[[connector.actions.inputs]]
+key = "description"
+label = "Description"
+
+[[connector.actions.inputs]]
+key = "teamKey"
+label = "Team key"
+description = "Defaults to the connection’s team."
+
+[[connector.actions]]
+type = "closeIssue"
+label = "Close an issue"
+description = "Move an issue to the first completed state its team defines."
+outputs = [{ key = "state", description = "The state it now holds" }]
+
+[[connector.actions.inputs]]
+key = "identifier"
+label = "Issue"
+required = true
+description = "e.g. ENG-123"

@@ -34,6 +34,7 @@
     "vitest": "^4.1.10"
   },
   "vorn": {
+    "publisher": "Vorn",
     "category": "Development",
     "keywords": [
       "linear",
@@ -43,6 +44,8 @@
       "backlog"
     ],
     "auth": "Uses a Linear personal API key, created at linear.app/settings/api.",
-    "packs": true
+    "hosts": [
+      "api.linear.app"
+    ]
   }
 }

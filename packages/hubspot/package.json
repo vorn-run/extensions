@@ -46,6 +46,7 @@
     "vitest": "^4.1.10"
   },
   "vorn": {
+    "publisher": "Vorn",
     "category": "Productivity",
     "keywords": [
       "hubspot",
@@ -57,6 +58,8 @@
       "sales"
     ],
     "auth": "Paste a HubSpot private app access token with the contacts, companies and deals read and write scopes, crm.objects.owners.read and crm.schemas.deals.read. There is no HubSpot CLI to borrow a CRM login from.",
-    "packs": true
+    "hosts": [
+      "api.hubapi.com"
+    ]
   }
 }

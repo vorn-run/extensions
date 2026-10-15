@@ -47,6 +47,7 @@
     "vitest": "^4.1.10"
   },
   "vorn": {
+    "publisher": "Vorn",
     "category": "Communication",
     "keywords": [
       "telegram",
@@ -56,6 +57,8 @@
       "messaging"
     ],
     "auth": "Paste a bot token from @BotFather. There is no Telegram CLI to sign in with, and Telegram's OAuth grants only outbound messaging, never reads.",
-    "packs": true
+    "hosts": [
+      "api.telegram.org"
+    ]
   }
 }

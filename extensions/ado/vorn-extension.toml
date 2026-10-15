@@ -1,0 +1,358 @@
+id = "ado"
+name = "Azure DevOps"
+version = "0.4.1"
+api = "vorn:connector@1"
+publisher = "Vorn"
+description = "Trigger workflows from work items and pull requests, and review, comment, vote and update from a step."
+
+[icon]
+view_box = "0 0 24 24"
+paths = ["M0 8.877L2.247 5.91l8.405-3.416V.022l7.37 5.393L2.966 8.338v8.225L0 15.707zm24-4.45v14.651l-5.753 4.9-9.303-3.057v3.056l-5.978-7.416 15.057 1.798V5.415z"]
+
+[service]
+command = ["node", "index.js"]
+
+[checks]
+command = ["node", "index.js", "--check"]
+
+[declares]
+network = ["dev.azure.com", "*.dev.azure.com", "*.visualstudio.com"]
+
+[connector.auth]
+rung = "cli"
+probe = { command = "az", args = ["account", "show"] }
+
+[[connector.triggers]]
+type = "workItem"
+label = "Work item matches the query"
+description = "Fires once per work item the WIQL query newly returns."
+
+[[connector.triggers]]
+type = "pullRequestOpened"
+label = "A pull request is opened"
+description = "Fires once for each active pull request opened since the last poll — the start of an automated review."
+
+[[connector.actions]]
+type = "createWorkItem"
+label = "Create a work item"
+description = "Add a work item to the board and return its id and url."
+outputs = [{ key = "id", type = "number", description = "Id of the work item created" }, { key = "url", description = "Where to open it on the board" }]
+
+[[connector.actions.inputs]]
+key = "title"
+label = "Title"
+required = true
+
+[[connector.actions.inputs]]
+key = "type"
+label = "Work item type"
+description = "Bug, Task, User Story… Defaults to Task."
+
+[[connector.actions.inputs]]
+key = "description"
+label = "Description"
+
+[[connector.actions.inputs]]
+key = "assignedTo"
+label = "Assign to"
+description = "An email address."
+
+[[connector.actions.inputs]]
+key = "project"
+label = "Project"
+description = "Defaults to ADO_PROJECT."
+
+[[connector.actions]]
+type = "updateWorkItem"
+label = "Update a work item"
+description = "Change the title, state, description or assignee of a work item."
+outputs = [{ key = "id", type = "number" }, { key = "url", description = "Where to open it on the board" }, { key = "state", description = "State after the update" }]
+
+[[connector.actions.inputs]]
+key = "id"
+label = "Work item id"
+type = "number"
+required = true
+
+[[connector.actions.inputs]]
+key = "title"
+label = "Title"
+
+[[connector.actions.inputs]]
+key = "state"
+label = "State"
+description = "Active, Resolved, Closed…"
+
+[[connector.actions.inputs]]
+key = "description"
+label = "Description"
+
+[[connector.actions.inputs]]
+key = "assignedTo"
+label = "Assign to"
+description = "An email address."
+
+[[connector.actions]]
+type = "getWorkItem"
+label = "Read a work item"
+description = "Every field of one work item, for a step that needs more than the trigger carried."
+outputs = [{ key = "id", type = "number" }, { key = "url", description = "Where to open it on the board" }, { key = "title" }, { key = "state" }, { key = "type", description = "Bug, Task, User Story…" }, { key = "description", description = "HTML, as the board stores it" }, { key = "assignedTo", description = "Display name of the assignee, if any" }, { key = "fields", type = "object", description = "Every field, by reference name" }]
+
+[[connector.actions.inputs]]
+key = "id"
+label = "Work item id"
+type = "number"
+required = true
+description = "The work item number."
+
+[[connector.actions]]
+type = "commentOnWorkItem"
+label = "Comment on a work item"
+description = "Add a comment to a work item's discussion."
+outputs = [{ key = "commentId", type = "number" }, { key = "url", description = "The work item the comment is on" }]
+
+[[connector.actions.inputs]]
+key = "id"
+label = "Work item id"
+type = "number"
+required = true
+description = "The work item number."
+
+[[connector.actions.inputs]]
+key = "text"
+label = "Comment"
+required = true
+description = "Plain text, or HTML for links and lists."
+
+[[connector.actions]]
+type = "createPullRequest"
+label = "Open a pull request"
+description = "Open a pull request from a pushed branch, optionally linked to work items."
+outputs = [{ key = "id", type = "number", description = "The new pull request number" }, { key = "url", description = "Where to review it" }]
+
+[[connector.actions.inputs]]
+key = "sourceBranch"
+label = "Branch"
+required = true
+description = "The pushed branch."
+
+[[connector.actions.inputs]]
+key = "targetBranch"
+label = "Into"
+description = "Defaults to the repository's default branch."
+
+[[connector.actions.inputs]]
+key = "title"
+label = "Title"
+required = true
+description = "Pull request title."
+
+[[connector.actions.inputs]]
+key = "description"
+label = "Description"
+description = "Markdown."
+
+[[connector.actions.inputs]]
+key = "repository"
+label = "Repository"
+description = "Repository name. Defaults to ADO_REPOSITORY."
+
+[[connector.actions.inputs]]
+key = "draft"
+label = "Draft"
+type = "boolean"
+description = "Open it as a draft."
+
+[[connector.actions.inputs]]
+key = "workItems"
+label = "Work items"
+description = "Comma-separated work item ids to link."
+
+[[connector.actions]]
+type = "getPullRequest"
+label = "Read a pull request"
+description = "Title, description, branches, commits, merge status and every reviewer's vote."
+outputs = [{ key = "id", type = "number" }, { key = "url", description = "Where to review it" }, { key = "title" }, { key = "description" }, { key = "status", description = "active, completed or abandoned" }, { key = "isDraft", type = "boolean" }, { key = "repository" }, { key = "sourceBranch" }, { key = "targetBranch" }, { key = "author" }, { key = "mergeStatus", description = "succeeded, conflicts, queued…" }, { key = "sourceCommit", description = "Head of the branch being merged" }, { key = "targetCommit", description = "Head of the branch merged into" }, { key = "reviewers", type = "array", description = "{ name, vote, isRequired } for each" }]
+
+[[connector.actions.inputs]]
+key = "pullRequestId"
+label = "Pull request"
+type = "number"
+required = true
+description = "The pull request number, e.g. {{trigger.item.externalId}}."
+
+[[connector.actions]]
+type = "listPullRequestChanges"
+label = "List the files a pull request changes"
+description = "Every changed path as of the latest push, with the two commits to diff between."
+outputs = [{ key = "files", type = "array", description = "{ path, changeType, originalPath? } for each" }, { key = "count", type = "number" }, { key = "sourceCommit", description = "git diff <targetCommit> <sourceCommit> shows the change" }, { key = "targetCommit" }]
+
+[[connector.actions.inputs]]
+key = "pullRequestId"
+label = "Pull request"
+type = "number"
+required = true
+description = "The pull request number, e.g. {{trigger.item.externalId}}."
+
+[[connector.actions]]
+type = "listPullRequestComments"
+label = "Read the review discussion"
+description = "Comment threads on a pull request, most recently active first, with status and the line each is on — so a review does not repeat itself."
+outputs = [{ key = "threads", type = "array", description = "{ id, status, filePath, line, updatedAt, comments: [{ id, author, content }] } for each; filePath and line are null off a file or line" }, { key = "count", type = "number", description = "Threads returned" }, { key = "total", type = "number", description = "Threads that matched, before top" }]
+
+[[connector.actions.inputs]]
+key = "pullRequestId"
+label = "Pull request"
+type = "number"
+required = true
+description = "The pull request number, e.g. {{trigger.item.externalId}}."
+
+[[connector.actions.inputs]]
+key = "status"
+label = "Only these statuses"
+description = "Comma-separated: active, fixed, wontFix, closed, byDesign. \"active\" is what triage wants. Blank reads every thread."
+
+[[connector.actions.inputs]]
+key = "top"
+label = "At most"
+type = "number"
+description = "Keep only the most recently active threads. Defaults to 50; total says how many matched."
+
+[[connector.actions]]
+type = "commentOnPullRequest"
+label = "Comment on a pull request"
+description = "Start a thread on the overview or on a line of a file, or reply to an existing thread."
+outputs = [{ key = "threadId", type = "number", description = "Thread the comment is in" }, { key = "commentId", type = "number" }, { key = "url", description = "The thread, on the pull request" }]
+
+[[connector.actions.inputs]]
+key = "pullRequestId"
+label = "Pull request"
+type = "number"
+required = true
+description = "The pull request number, e.g. {{trigger.item.externalId}}."
+
+[[connector.actions.inputs]]
+key = "text"
+label = "Comment"
+required = true
+description = "Markdown."
+
+[[connector.actions.inputs]]
+key = "filePath"
+label = "File"
+description = "Path in the repository, e.g. /src/app.ts. Blank comments on the overview."
+
+[[connector.actions.inputs]]
+key = "line"
+label = "Line"
+type = "number"
+description = "Line in the new version of the file. Needs a file."
+
+[[connector.actions.inputs]]
+key = "threadId"
+label = "Reply to thread"
+type = "number"
+description = "A thread id from listPullRequestComments. Replies instead of starting a thread."
+
+[[connector.actions.inputs]]
+key = "status"
+label = "Thread status"
+type = "select"
+description = "Defaults to active for a new thread; unchanged for a reply."
+options = [{ value = "active", label = "Active" }, { value = "fixed", label = "Resolved" }, { value = "wontFix", label = "Won't fix" }, { value = "closed", label = "Closed" }, { value = "byDesign", label = "By design" }]
+
+[[connector.actions]]
+type = "resolvePullRequestThread"
+label = "Resolve a review thread"
+description = "Mark a comment thread fixed, won't fix, closed, by design — or active again."
+outputs = [{ key = "threadId", type = "number" }, { key = "status", description = "Status after the change" }]
+
+[[connector.actions.inputs]]
+key = "pullRequestId"
+label = "Pull request"
+type = "number"
+required = true
+description = "The pull request number, e.g. {{trigger.item.externalId}}."
+
+[[connector.actions.inputs]]
+key = "threadId"
+label = "Thread"
+type = "number"
+required = true
+description = "A thread id from listPullRequestComments."
+
+[[connector.actions.inputs]]
+key = "status"
+label = "Status"
+type = "select"
+description = "Defaults to fixed."
+options = [{ value = "active", label = "Active" }, { value = "fixed", label = "Resolved" }, { value = "wontFix", label = "Won't fix" }, { value = "closed", label = "Closed" }, { value = "byDesign", label = "By design" }]
+
+[[connector.actions]]
+type = "votePullRequest"
+label = "Approve or reject a pull request"
+description = "Cast your vote as the signed-in identity: approve, approve with suggestions, wait for author, reject, or reset."
+outputs = [{ key = "vote", description = "The vote now recorded" }, { key = "url", description = "Where to review it" }]
+
+[[connector.actions.inputs]]
+key = "pullRequestId"
+label = "Pull request"
+type = "number"
+required = true
+description = "The pull request number, e.g. {{trigger.item.externalId}}."
+
+[[connector.actions.inputs]]
+key = "vote"
+label = "Vote"
+type = "select"
+required = true
+description = "Pair it with commentOnPullRequest to say why."
+options = [{ value = "approve", label = "Approve" }, { value = "approveWithSuggestions", label = "Approve with suggestions" }, { value = "waitForAuthor", label = "Wait for author" }, { value = "reject", label = "Reject" }, { value = "reset", label = "Reset vote" }]
+
+[[connector.actions]]
+type = "completePullRequest"
+label = "Complete (merge) a pull request"
+description = "Merge now, or set auto-complete so it merges itself once approvals and policies pass."
+outputs = [{ key = "status", description = "completed when merged now; active while auto-complete waits" }, { key = "autoComplete", type = "boolean", description = "Whether auto-complete is set" }, { key = "mergeStatus", description = "succeeded, conflicts, queued…" }, { key = "url", description = "Where to review it" }]
+
+[[connector.actions.inputs]]
+key = "pullRequestId"
+label = "Pull request"
+type = "number"
+required = true
+description = "The pull request number, e.g. {{trigger.item.externalId}}."
+
+[[connector.actions.inputs]]
+key = "autoComplete"
+label = "Auto-complete"
+type = "boolean"
+description = "Merge when every required approval and policy passes, rather than now. Recommended where approvals are required."
+
+[[connector.actions.inputs]]
+key = "mergeStrategy"
+label = "Merge type"
+type = "select"
+description = "Defaults to squash."
+options = [{ value = "squash", label = "Squash commit" }, { value = "noFastForward", label = "Merge (no fast-forward)" }, { value = "rebase", label = "Rebase and fast-forward" }, { value = "rebaseMerge", label = "Semi-linear merge" }]
+
+[[connector.actions.inputs]]
+key = "keepSourceBranch"
+label = "Keep branch"
+type = "boolean"
+description = "Keep the source branch after merging. It is deleted by default."
+
+[[connector.actions.inputs]]
+key = "transitionWorkItems"
+label = "Close linked work items"
+type = "boolean"
+description = "Move linked work items to their completed state."
+
+[[connector.actions.inputs]]
+key = "message"
+label = "Merge commit message"
+description = "Defaults to the one Azure DevOps writes."
+
+[[connector.actions.inputs]]
+key = "commitId"
+label = "Reviewed commit"
+description = "The sourceCommit a review step read, e.g. {{steps.getPullRequest.sourceCommit}}. Merging now is refused if the branch has moved past it. Blank merges the branch as it is when this step runs."

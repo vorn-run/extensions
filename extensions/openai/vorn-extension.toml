@@ -1,0 +1,267 @@
+id = "openai"
+name = "OpenAI"
+version = "0.1.1"
+api = "vorn:connector@1"
+publisher = "Vorn"
+description = "Trigger workflows when an OpenAI batch or fine-tuning job finishes or a file is uploaded, and create responses, chat completions, embeddings, moderations and batches from a step."
+
+[icon]
+view_box = "0 0 24 24"
+paths = ["M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z"]
+
+[service]
+command = ["node", "index.js"]
+
+[checks]
+command = ["node", "index.js", "--check"]
+
+[declares]
+network = ["api.openai.com"]
+
+[connector.auth]
+rung = "key"
+keys = ["apiKey"]
+
+[[connector.triggers]]
+type = "batchFinished"
+label = "A batch finishes"
+description = "Fires once when a batch reaches completed, failed, expired or cancelled. The list has no status filter, so every batch created inside the look-back is read and the terminal ones kept."
+status_mapping = [{ upstream = "completed", suggested_local = "done" }, { upstream = "failed", suggested_local = "todo" }, { upstream = "expired", suggested_local = "cancelled" }, { upstream = "cancelled", suggested_local = "cancelled" }]
+default_workflow = { name = "OpenAI: finished batches", default_cron_from_minutes = 5 }
+
+[[connector.triggers]]
+type = "fileUploaded"
+label = "A file is uploaded"
+description = "Fires once per file uploaded since the last poll, newest first from GET /files."
+default_workflow = { name = "OpenAI: uploaded files", default_cron_from_minutes = 5 }
+
+[[connector.triggers]]
+type = "fineTuningJobFinished"
+label = "A fine-tuning job finishes"
+description = "Fires once when a fine-tuning job reaches succeeded, failed or cancelled."
+status_mapping = [{ upstream = "succeeded", suggested_local = "done" }, { upstream = "failed", suggested_local = "todo" }, { upstream = "cancelled", suggested_local = "cancelled" }]
+default_workflow = { name = "OpenAI: finished fine-tuning jobs", default_cron_from_minutes = 15 }
+
+[[connector.actions]]
+type = "createResponse"
+label = "Create a response"
+description = "Ask a model for a response with the Responses API, optionally constrained to a JSON schema. Spends tokens; not stored unless asked."
+outputs = [{ key = "id", description = "Response id" }, { key = "status", description = "completed, incomplete, failed or in_progress" }, { key = "text", description = "Every output_text part of every message, joined" }, { key = "json", description = "The text parsed as JSON when a schema was given, else null" }, { key = "model", description = "The model that answered" }, { key = "usage", description = "{ input_tokens, output_tokens, total_tokens, reasoning_tokens }" }, { key = "incompleteReason", description = "Why the response stopped early, or null" }, { key = "response", description = "The raw response object" }]
+
+[[connector.actions.inputs]]
+key = "model"
+label = "Model"
+required = true
+description = "Model id, such as gpt-4o-mini."
+
+[[connector.actions.inputs]]
+key = "input"
+label = "Input"
+required = true
+description = "Plain text, or a JSON array of message items { role, content } with role user, assistant, system or developer."
+
+[[connector.actions.inputs]]
+key = "instructions"
+label = "Instructions"
+description = "A system or developer message inserted into the model’s context."
+
+[[connector.actions.inputs]]
+key = "temperature"
+label = "Temperature"
+type = "number"
+description = "Sampling temperature, 0 to 2. Lower is more deterministic."
+
+[[connector.actions.inputs]]
+key = "maxOutputTokens"
+label = "Max output tokens"
+type = "number"
+description = "Upper bound on generated tokens, including reasoning tokens. Sent as max_output_tokens."
+
+[[connector.actions.inputs]]
+key = "schema"
+label = "JSON schema"
+type = "json"
+description = "A JSON Schema object the output must match, sent as text.format json_schema with strict true."
+
+[[connector.actions.inputs]]
+key = "schemaName"
+label = "Schema name"
+description = "Name of the format, letters, digits, underscores and dashes up to 64 characters. Default output."
+
+[[connector.actions.inputs]]
+key = "store"
+label = "Store the response"
+type = "boolean"
+description = "Keep the response retrievable for 30 days. Off here by default, unlike the API."
+
+[[connector.actions]]
+type = "createChatCompletion"
+label = "Create a chat completion"
+description = "Ask a model for the next message in a conversation with the Chat Completions API. Spends tokens."
+outputs = [{ key = "id", description = "Completion id" }, { key = "text", description = "Content of the first choice" }, { key = "finishReason", description = "stop, length, tool_calls, content_filter or function_call" }, { key = "refusal", description = "The refusal message of the first choice, or null" }, { key = "model", description = "The model that answered" }, { key = "usage", description = "{ prompt_tokens, completion_tokens, total_tokens }" }, { key = "completion", description = "The raw completion object" }]
+
+[[connector.actions.inputs]]
+key = "model"
+label = "Model"
+required = true
+description = "Model id, such as gpt-4o-mini."
+
+[[connector.actions.inputs]]
+key = "messages"
+label = "Messages"
+type = "json"
+required = true
+description = "A JSON array of { role, content } with role system, developer, user, assistant or tool."
+
+[[connector.actions.inputs]]
+key = "temperature"
+label = "Temperature"
+type = "number"
+description = "Sampling temperature, 0 to 2. Lower is more deterministic."
+
+[[connector.actions.inputs]]
+key = "maxTokens"
+label = "Max completion tokens"
+type = "number"
+description = "Upper bound on generated tokens, including reasoning tokens. Sent as max_completion_tokens."
+
+[[connector.actions.inputs]]
+key = "responseFormat"
+label = "Response format"
+type = "json"
+description = "JSON: { \"type\": \"text\" }, { \"type\": \"json_object\" } or { \"type\": \"json_schema\", \"json_schema\": { name, schema, strict } }."
+
+[[connector.actions]]
+type = "createEmbeddings"
+label = "Create embeddings"
+description = "Turn text into embedding vectors. The same input yields the same vectors and nothing is stored."
+outputs = [{ key = "embeddings", description = "Array of number arrays, in input order" }, { key = "dimensions", type = "number", description = "Length of the first vector" }, { key = "model", description = "The model used" }, { key = "usage", description = "{ prompt_tokens, total_tokens }" }]
+
+[[connector.actions.inputs]]
+key = "model"
+label = "Model"
+required = true
+description = "text-embedding-3-small, text-embedding-3-large or text-embedding-ada-002."
+
+[[connector.actions.inputs]]
+key = "input"
+label = "Input"
+required = true
+description = "Plain text, or a JSON array of strings to embed in one call."
+
+[[connector.actions.inputs]]
+key = "dimensions"
+label = "Dimensions"
+type = "number"
+description = "How many dimensions each vector should have. text-embedding-3 models only."
+
+[[connector.actions]]
+type = "moderateText"
+label = "Moderate text"
+description = "Classify text against OpenAI’s usage policies. Free, and nothing is stored."
+outputs = [{ key = "flagged", type = "boolean", description = "True when any result is flagged" }, { key = "results", description = "Array of { flagged, categories, category_scores, category_applied_input_types }" }, { key = "model", description = "The moderation model used" }, { key = "id", description = "Moderation id" }]
+
+[[connector.actions.inputs]]
+key = "input"
+label = "Input"
+required = true
+description = "Plain text, or a JSON array of strings to classify separately."
+
+[[connector.actions.inputs]]
+key = "model"
+label = "Model"
+description = "omni-moderation-latest (default), omni-moderation-2024-09-26, text-moderation-latest or text-moderation-stable."
+
+[[connector.actions]]
+type = "listModels"
+label = "List models"
+description = "List the models the key can use, with their owner."
+outputs = [{ key = "models", description = "Array of { id, created, ownedBy, shutdownDate }" }, { key = "count", type = "number", description = "How many models" }]
+
+[[connector.actions]]
+type = "getModel"
+label = "Get a model"
+description = "Read one model by id. An unknown id answers 404 model_not_found."
+outputs = [{ key = "id", description = "Model id" }, { key = "created", description = "When it was created, ISO 8601" }, { key = "ownedBy", description = "The organization that owns it" }, { key = "shutdownDate", description = "Planned retirement date, or null" }]
+
+[[connector.actions.inputs]]
+key = "model"
+label = "Model"
+required = true
+description = "Model id, such as gpt-4o-mini."
+
+[[connector.actions]]
+type = "listFiles"
+label = "List files"
+description = "List uploaded files, newest first, optionally by purpose."
+outputs = [{ key = "files", description = "Array of { id, filename, bytes, purpose, createdAt, expiresAt }" }, { key = "hasMore", type = "boolean", description = "Whether another page follows" }, { key = "lastId", description = "Id of the last file listed, for after" }]
+
+[[connector.actions.inputs]]
+key = "purpose"
+label = "Purpose"
+type = "select"
+description = "Only files uploaded with this purpose."
+options = [{ value = "assistants" }, { value = "assistants_output" }, { value = "batch" }, { value = "batch_output" }, { value = "fine-tune" }, { value = "fine-tune-results" }, { value = "vision" }, { value = "user_data" }]
+
+[[connector.actions.inputs]]
+key = "limit"
+label = "Limit"
+type = "number"
+description = "1 to 10,000 files per page; default 100."
+
+[[connector.actions.inputs]]
+key = "order"
+label = "Order"
+type = "select"
+description = "Sort by created_at. Default desc."
+options = [{ value = "desc", label = "Newest first" }, { value = "asc", label = "Oldest first" }]
+
+[[connector.actions.inputs]]
+key = "after"
+label = "After"
+description = "A file id from an earlier page; the list continues after it."
+
+[[connector.actions]]
+type = "getBatch"
+label = "Get a batch"
+description = "Read one batch by id, with its status, request counts and output files."
+outputs = [{ key = "id", description = "Batch id" }, { key = "status", description = "validating, failed, in_progress, finalizing, completed, expired, cancelling or cancelled" }, { key = "endpoint", description = "The endpoint the batch calls" }, { key = "inputFileId", description = "The JSONL file of requests" }, { key = "outputFileId", description = "The file of results, once completed" }, { key = "errorFileId", description = "The file of failed requests, or null" }, { key = "requestCounts", description = "{ total, completed, failed }" }, { key = "createdAt", description = "When it was created, ISO 8601" }, { key = "completedAt", description = "When it completed, or null" }, { key = "failedAt", description = "When it failed, or null" }, { key = "expiredAt", description = "When it expired, or null" }, { key = "cancelledAt", description = "When it was cancelled, or null" }, { key = "errors", description = "Validation errors, or null" }, { key = "metadata", description = "The metadata it was created with" }, { key = "batch", description = "The raw batch object" }]
+
+[[connector.actions.inputs]]
+key = "batch"
+label = "Batch"
+required = true
+description = "Batch id, such as batch_abc123."
+
+[[connector.actions]]
+type = "createBatch"
+label = "Create a batch"
+description = "Queue a batch of requests from an uploaded JSONL file. Each call queues a new batch that runs and bills."
+outputs = [{ key = "id", description = "Batch id" }, { key = "status", description = "validating, failed, in_progress, finalizing, completed, expired, cancelling or cancelled" }, { key = "endpoint", description = "The endpoint the batch calls" }, { key = "inputFileId", description = "The JSONL file of requests" }, { key = "outputFileId", description = "The file of results, once completed" }, { key = "errorFileId", description = "The file of failed requests, or null" }, { key = "requestCounts", description = "{ total, completed, failed }" }, { key = "createdAt", description = "When it was created, ISO 8601" }, { key = "completedAt", description = "When it completed, or null" }, { key = "failedAt", description = "When it failed, or null" }, { key = "expiredAt", description = "When it expired, or null" }, { key = "cancelledAt", description = "When it was cancelled, or null" }, { key = "errors", description = "Validation errors, or null" }, { key = "metadata", description = "The metadata it was created with" }, { key = "batch", description = "The raw batch object" }]
+
+[[connector.actions.inputs]]
+key = "inputFileId"
+label = "Input file"
+required = true
+description = "Id of an uploaded JSONL file with purpose batch, one request per line."
+
+[[connector.actions.inputs]]
+key = "endpoint"
+label = "Endpoint"
+type = "select"
+required = true
+description = "The endpoint every request in the file targets."
+options = [{ value = "/v1/responses" }, { value = "/v1/chat/completions" }, { value = "/v1/embeddings" }, { value = "/v1/completions" }, { value = "/v1/moderations" }, { value = "/v1/images/generations" }, { value = "/v1/images/edits" }, { value = "/v1/videos" }]
+
+[[connector.actions.inputs]]
+key = "completionWindow"
+label = "Completion window"
+type = "select"
+description = "How long the batch has to finish. Only 24h is supported; default 24h."
+options = [{ value = "24h" }]
+
+[[connector.actions.inputs]]
+key = "metadata"
+label = "Metadata"
+type = "json"
+description = "A JSON object of up to 16 string pairs, keys up to 64 characters and values up to 512."

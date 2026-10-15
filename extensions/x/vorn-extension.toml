@@ -1,0 +1,140 @@
+id = "x"
+name = "X"
+version = "0.1.1"
+api = "vorn:connector@1"
+publisher = "Vorn"
+description = "Trigger workflows from new mentions or posts matching a search on X, and create, reply to, delete, read and search posts from a step."
+
+[icon]
+view_box = "0 0 24 24"
+paths = ["M0 1.2H7.6L24 22.8H16.6Z M4.3 3.4H6.6L19.7 20.6H17.4Z M18.9 1.2H22.7L14.72 10.57L12.93 8.22Z M10.77 15.21L8.97 12.87L0.5 22.8H4.3Z"]
+
+[service]
+command = ["node", "index.js"]
+
+[checks]
+command = ["node", "index.js", "--check"]
+
+[declares]
+network = ["api.x.com", "api.twitter.com", "upload.twitter.com"]
+
+[connector.auth]
+rung = "key"
+keys = ["apiKey", "apiSecret", "accessToken", "accessTokenSecret"]
+
+[[connector.triggers]]
+type = "newMention"
+label = "New mention"
+description = "A post mentions the connected account. Polls the mentions timeline with since_id; a burst above 100 mentions between polls loses the oldest. Access: 300 requests per 15 minutes per user, billed per post read (an Owned Read when the account owns the app). Metered per request and per post read; see the README for the price and the rate limit of each call."
+default_workflow = { name = "X: new mentions", default_cron_from_minutes = 5 }
+
+[[connector.triggers]]
+type = "newSearchResult"
+label = "New search result"
+description = "A post from the last 7 days matches the search query with since_id; a burst above 100 matches between polls loses the oldest. Access: 300 requests per 15 minutes per user, billed per post returned; recent search is the read that used to need a paid tier. Metered per request and per post read; see the README for the price and the rate limit of each call."
+default_workflow = { name = "X: search results", default_cron_from_minutes = 5 }
+
+[[connector.actions]]
+type = "createPost"
+label = "Create post"
+description = "Publish a post of up to 280 characters, optionally as a reply or a quote. Needs Read and Write permission."
+outputs = [{ key = "id", type = "string", description = "The new post id" }, { key = "url", type = "string", description = "https://x.com/i/status/{id}" }, { key = "text", type = "string", description = "The text as X stored it" }]
+
+[[connector.actions.inputs]]
+key = "text"
+label = "Text"
+required = true
+description = "The post, up to 280 characters for non-Premium accounts."
+
+[[connector.actions.inputs]]
+key = "inReplyToPostId"
+label = "In reply to post id"
+description = "Id of the post to reply to, sent as reply.in_reply_to_tweet_id."
+
+[[connector.actions.inputs]]
+key = "quotePostId"
+label = "Quote post id"
+description = "Id of the post to quote, sent as quote_tweet_id; the docs say quoting needs an Enterprise plan."
+
+[[connector.actions]]
+type = "replyToPost"
+label = "Reply to post"
+description = "Reply to a post with up to 280 characters. Needs Read and Write permission."
+outputs = [{ key = "id", type = "string", description = "The new post id" }, { key = "url", type = "string", description = "https://x.com/i/status/{id}" }, { key = "text", type = "string", description = "The text as X stored it" }]
+
+[[connector.actions.inputs]]
+key = "postId"
+label = "Post id"
+required = true
+description = "The post being replied to."
+
+[[connector.actions.inputs]]
+key = "text"
+label = "Text"
+required = true
+description = "The reply, up to 280 characters for non-Premium accounts."
+
+[[connector.actions]]
+type = "deletePost"
+label = "Delete post"
+description = "Delete one of the connected account's own posts. Needs Read and Write permission."
+outputs = [{ key = "deleted", type = "boolean", description = "Whether X reports the post deleted" }]
+
+[[connector.actions.inputs]]
+key = "postId"
+label = "Post id"
+required = true
+description = "The post to delete."
+
+[[connector.actions]]
+type = "getMe"
+label = "Get me"
+description = "The connected account. Access: 75 requests per 15 minutes per user, one user read. Metered per request and per post read; see the README for the price and the rate limit of each call."
+outputs = [{ key = "id", type = "string", description = "The account id" }, { key = "username", type = "string", description = "The handle without @" }, { key = "name", type = "string", description = "The display name" }, { key = "url", type = "string", description = "https://x.com/{username}" }]
+
+[[connector.actions]]
+type = "getPost"
+label = "Get post"
+description = "A post by id with its author and public metrics. Access: 900 requests per 15 minutes per user, one post read plus one user read. Metered per request and per post read; see the README for the price and the rate limit of each call."
+outputs = [{ key = "id", type = "string", description = "The post id" }, { key = "text", type = "string", description = "The post text" }, { key = "createdAt", type = "string", description = "ISO 8601 creation instant" }, { key = "authorId", type = "string", description = "The author id" }, { key = "authorUsername", type = "string", description = "The author handle, when included" }, { key = "conversationId", type = "string", description = "The conversation (thread root) id" }, { key = "url", type = "string", description = "The post page" }, { key = "metrics", description = "public_metrics as JSON: like, reply, repost, quote, bookmark and impression counts" }, { key = "raw", description = "The full answer as JSON" }]
+
+[[connector.actions.inputs]]
+key = "postId"
+label = "Post id"
+required = true
+description = "The post to read."
+
+[[connector.actions]]
+type = "getUserByUsername"
+label = "Get user by username"
+description = "A user by handle. Access: 900 requests per 15 minutes per user, one user read. Metered per request and per post read; see the README for the price and the rate limit of each call."
+outputs = [{ key = "id", type = "string", description = "The user id" }, { key = "username", type = "string", description = "The handle" }, { key = "name", type = "string", description = "The display name" }, { key = "description", type = "string", description = "The profile bio" }, { key = "createdAt", type = "string", description = "ISO 8601 account creation instant" }, { key = "followers", type = "number", description = "public_metrics.followers_count" }, { key = "following", type = "number", description = "public_metrics.following_count" }, { key = "posts", type = "number", description = "public_metrics.tweet_count" }, { key = "url", type = "string", description = "https://x.com/{username}" }, { key = "raw", description = "The full answer as JSON" }]
+
+[[connector.actions.inputs]]
+key = "username"
+label = "Username"
+required = true
+description = "The handle without @ (1 to 15 letters, digits or underscores); a leading @ is stripped."
+
+[[connector.actions]]
+type = "searchRecentPosts"
+label = "Search recent posts"
+description = "Posts from the last 7 days matching a query, newest first. Access: 300 requests per 15 minutes per user, billed per post returned; this is the read that used to need a paid tier. Metered per request and per post read; see the README for the price and the rate limit of each call."
+outputs = [{ key = "posts", description = "JSON array of posts: id, text, createdAt, conversationId, inReplyToUserId, author, url" }, { key = "count", type = "number", description = "meta.result_count" }, { key = "newestId", type = "string", description = "meta.newest_id" }, { key = "nextToken", type = "string", description = "meta.next_token, for the page after this one" }]
+
+[[connector.actions.inputs]]
+key = "query"
+label = "Query"
+required = true
+description = "Recent-search query, 1 to 512 characters, such as from:xdevelopers -is:retweet."
+
+[[connector.actions.inputs]]
+key = "maxResults"
+label = "Max results"
+type = "number"
+description = "10 to 100, default 10; a smaller value is raised to 10."
+
+[[connector.actions.inputs]]
+key = "sinceId"
+label = "Since id"
+description = "Only posts with an id greater than this one."

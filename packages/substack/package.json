@@ -49,6 +49,7 @@
     "vitest": "^4.1.10"
   },
   "vorn": {
+    "publisher": "Vorn",
     "category": "Social",
     "keywords": [
       "substack",
@@ -60,6 +61,9 @@
       "writing"
     ],
     "auth": "Sign in to Substack in the window Vorn opens; reading a publication's feed and searching posts need no sign-in.",
-    "packs": true
+    "hosts": [
+      "substack.com",
+      "*.substack.com"
+    ]
   }
 }

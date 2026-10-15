@@ -1,0 +1,286 @@
+id = "trello"
+name = "Trello"
+version = "0.1.1"
+api = "vorn:connector@1"
+publisher = "Vorn"
+description = "Trigger workflows from cards created, moved, commented on or due soon on a Trello board, and create, update, move, comment on, label, archive, read and search cards from a step."
+
+[icon]
+view_box = "0 0 24 24"
+paths = ["M5 2h14a3 3 0 0 1 3 3v14a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V5a3 3 0 0 1 3-3zm1.5 3.5a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-11a1 1 0 0 0-1-1h-3zm8 0a1 1 0 0 0-1 1V12a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V6.5a1 1 0 0 0-1-1h-3z"]
+
+[service]
+command = ["node", "index.js"]
+
+[checks]
+command = ["node", "index.js", "--check"]
+
+[declares]
+network = ["api.trello.com"]
+
+[connector.auth]
+rung = "key"
+keys = ["apiKey", "token"]
+
+[[connector.triggers]]
+type = "cardCreated"
+label = "A card is created"
+description = "Fires once for each card created on the board since the last poll, oldest first."
+default_workflow = { name = "Trello: new cards", default_cron_from_minutes = 5 }
+
+[[connector.triggers]]
+type = "cardMoved"
+label = "A card moves to another list"
+description = "Fires once for each card moved between lists on the board, with the list before and after. Set a destination list to fire only on arrivals there."
+default_workflow = { name = "Trello: moved cards", default_cron_from_minutes = 5 }
+
+[[connector.triggers]]
+type = "commentAdded"
+label = "A comment is added"
+description = "Fires once for each comment added to a card on the board since the last poll."
+default_workflow = { name = "Trello: new comments", default_cron_from_minutes = 5 }
+
+[[connector.triggers]]
+type = "cardDueSoon"
+label = "A card is due soon"
+description = "Fires once per due date for each open card on the board whose due date falls within the configured hours and is not marked complete. A changed due date fires again."
+default_workflow = { name = "Trello: cards due soon", default_cron_from_minutes = 30 }
+
+[[connector.actions]]
+type = "createCard"
+label = "Create a card"
+description = "Add a card to a list."
+outputs = [{ key = "id", description = "Card id" }, { key = "name", description = "Card name" }, { key = "desc", description = "Card description, Markdown" }, { key = "closed", type = "boolean", description = "True when the card is archived" }, { key = "due", description = "Due date, ISO 8601, or null" }, { key = "dueComplete", type = "boolean", description = "Whether the due date is marked complete" }, { key = "idBoard", description = "The board the card is on" }, { key = "idList", description = "The list the card is in" }, { key = "idLabels", description = "Label ids on the card" }, { key = "idMembers", description = "Member ids on the card" }, { key = "labels", description = "Labels on the card: id, name, color" }, { key = "pos", type = "number", description = "Position within the list" }, { key = "shortLink", description = "The short link in the card URL" }, { key = "shortUrl", description = "https://trello.com/c/<shortLink>" }, { key = "url", description = "The full card URL" }, { key = "dateLastActivity", description = "When the card last changed, ISO 8601" }]
+
+[[connector.actions.inputs]]
+key = "listId"
+label = "List"
+required = true
+description = "The id of the list the card should be created in."
+
+[[connector.actions.inputs]]
+key = "name"
+label = "Name"
+required = true
+description = "The name for the card."
+
+[[connector.actions.inputs]]
+key = "description"
+label = "Description"
+description = "The description for the card, Markdown."
+
+[[connector.actions.inputs]]
+key = "due"
+label = "Due date"
+description = "A due date for the card, ISO 8601 such as 2026-09-18T12:00:00.000Z."
+
+[[connector.actions.inputs]]
+key = "labelIds"
+label = "Label ids"
+description = "Comma-separated ids of labels to add to the card."
+
+[[connector.actions.inputs]]
+key = "memberIds"
+label = "Member ids"
+description = "Comma-separated ids of members to add to the card."
+
+[[connector.actions.inputs]]
+key = "position"
+label = "Position"
+description = "top, bottom, or a positive number for the card’s place in the list."
+
+[[connector.actions]]
+type = "updateCard"
+label = "Update a card"
+description = "Change the name, description, due date, due-complete flag or archived state of a card; only the inputs given are sent."
+outputs = [{ key = "id", description = "Card id" }, { key = "name", description = "Card name" }, { key = "desc", description = "Card description, Markdown" }, { key = "closed", type = "boolean", description = "True when the card is archived" }, { key = "due", description = "Due date, ISO 8601, or null" }, { key = "dueComplete", type = "boolean", description = "Whether the due date is marked complete" }, { key = "idBoard", description = "The board the card is on" }, { key = "idList", description = "The list the card is in" }, { key = "idLabels", description = "Label ids on the card" }, { key = "idMembers", description = "Member ids on the card" }, { key = "labels", description = "Labels on the card: id, name, color" }, { key = "pos", type = "number", description = "Position within the list" }, { key = "shortLink", description = "The short link in the card URL" }, { key = "shortUrl", description = "https://trello.com/c/<shortLink>" }, { key = "url", description = "The full card URL" }, { key = "dateLastActivity", description = "When the card last changed, ISO 8601" }]
+
+[[connector.actions.inputs]]
+key = "cardId"
+label = "Card"
+required = true
+description = "The card id (24 hex characters) or the short link from its URL, trello.com/c/<shortLink>."
+
+[[connector.actions.inputs]]
+key = "name"
+label = "Name"
+description = "The new name for the card."
+
+[[connector.actions.inputs]]
+key = "description"
+label = "Description"
+description = "The new description for the card."
+
+[[connector.actions.inputs]]
+key = "due"
+label = "Due date"
+description = "When the card is due, ISO 8601, or the word null to clear it."
+
+[[connector.actions.inputs]]
+key = "dueComplete"
+label = "Due complete"
+type = "boolean"
+description = "Whether the due date is marked complete."
+
+[[connector.actions.inputs]]
+key = "closed"
+label = "Archived"
+type = "boolean"
+description = "True archives the card, false restores it."
+
+[[connector.actions]]
+type = "moveCard"
+label = "Move a card"
+description = "Move a card to a list, optionally at a position or onto another board."
+outputs = [{ key = "id", description = "Card id" }, { key = "name", description = "Card name" }, { key = "desc", description = "Card description, Markdown" }, { key = "closed", type = "boolean", description = "True when the card is archived" }, { key = "due", description = "Due date, ISO 8601, or null" }, { key = "dueComplete", type = "boolean", description = "Whether the due date is marked complete" }, { key = "idBoard", description = "The board the card is on" }, { key = "idList", description = "The list the card is in" }, { key = "idLabels", description = "Label ids on the card" }, { key = "idMembers", description = "Member ids on the card" }, { key = "labels", description = "Labels on the card: id, name, color" }, { key = "pos", type = "number", description = "Position within the list" }, { key = "shortLink", description = "The short link in the card URL" }, { key = "shortUrl", description = "https://trello.com/c/<shortLink>" }, { key = "url", description = "The full card URL" }, { key = "dateLastActivity", description = "When the card last changed, ISO 8601" }]
+
+[[connector.actions.inputs]]
+key = "cardId"
+label = "Card"
+required = true
+description = "The card id (24 hex characters) or the short link from its URL, trello.com/c/<shortLink>."
+
+[[connector.actions.inputs]]
+key = "listId"
+label = "List"
+required = true
+description = "The id of the list the card should be in."
+
+[[connector.actions.inputs]]
+key = "position"
+label = "Position"
+description = "top, bottom, or a positive number for the card’s place in the list."
+
+[[connector.actions.inputs]]
+key = "boardId"
+label = "Board"
+description = "The id of the board the card should be on, for a move across boards."
+
+[[connector.actions]]
+type = "addComment"
+label = "Add a comment"
+description = "Comment on a card."
+outputs = [{ key = "id", description = "The comment action id" }, { key = "type", description = "commentCard" }, { key = "date", description = "When the comment was posted, ISO 8601" }, { key = "data", description = "text, card { id, name, shortLink }, board and list" }, { key = "memberCreator", description = "Who commented: id, fullName, username" }]
+
+[[connector.actions.inputs]]
+key = "cardId"
+label = "Card"
+required = true
+description = "The card id (24 hex characters) or the short link from its URL, trello.com/c/<shortLink>."
+
+[[connector.actions.inputs]]
+key = "text"
+label = "Text"
+required = true
+description = "The comment, Markdown."
+
+[[connector.actions]]
+type = "addLabel"
+label = "Add a label to a card"
+description = "Put a label on a card. A label already on the card is reported as present rather than as a failure."
+outputs = [{ key = "labelIds", description = "The card’s label ids as the API returned them" }, { key = "alreadyPresent", type = "boolean", description = "True when the label was on the card before the call" }]
+
+[[connector.actions.inputs]]
+key = "cardId"
+label = "Card"
+required = true
+description = "The card id (24 hex characters) or the short link from its URL, trello.com/c/<shortLink>."
+
+[[connector.actions.inputs]]
+key = "labelId"
+label = "Label"
+required = true
+description = "The id of the label to add."
+
+[[connector.actions]]
+type = "archiveCard"
+label = "Archive a card"
+description = "Archive a card. A second call leaves it archived."
+outputs = [{ key = "id", description = "Card id" }, { key = "name", description = "Card name" }, { key = "desc", description = "Card description, Markdown" }, { key = "closed", type = "boolean", description = "True when the card is archived" }, { key = "due", description = "Due date, ISO 8601, or null" }, { key = "dueComplete", type = "boolean", description = "Whether the due date is marked complete" }, { key = "idBoard", description = "The board the card is on" }, { key = "idList", description = "The list the card is in" }, { key = "idLabels", description = "Label ids on the card" }, { key = "idMembers", description = "Member ids on the card" }, { key = "labels", description = "Labels on the card: id, name, color" }, { key = "pos", type = "number", description = "Position within the list" }, { key = "shortLink", description = "The short link in the card URL" }, { key = "shortUrl", description = "https://trello.com/c/<shortLink>" }, { key = "url", description = "The full card URL" }, { key = "dateLastActivity", description = "When the card last changed, ISO 8601" }]
+
+[[connector.actions.inputs]]
+key = "cardId"
+label = "Card"
+required = true
+description = "The card id (24 hex characters) or the short link from its URL, trello.com/c/<shortLink>."
+
+[[connector.actions]]
+type = "getCard"
+label = "Get a card"
+description = "Read one card with its list and board."
+outputs = [{ key = "id", description = "Card id" }, { key = "name", description = "Card name" }, { key = "desc", description = "Card description, Markdown" }, { key = "closed", type = "boolean", description = "True when the card is archived" }, { key = "due", description = "Due date, ISO 8601, or null" }, { key = "dueComplete", type = "boolean", description = "Whether the due date is marked complete" }, { key = "idBoard", description = "The board the card is on" }, { key = "idList", description = "The list the card is in" }, { key = "idLabels", description = "Label ids on the card" }, { key = "idMembers", description = "Member ids on the card" }, { key = "labels", description = "Labels on the card: id, name, color" }, { key = "pos", type = "number", description = "Position within the list" }, { key = "shortLink", description = "The short link in the card URL" }, { key = "shortUrl", description = "https://trello.com/c/<shortLink>" }, { key = "url", description = "The full card URL" }, { key = "dateLastActivity", description = "When the card last changed, ISO 8601" }, { key = "list", description = "The list the card is in: id, name" }, { key = "board", description = "The board the card is on: id, name, shortUrl" }]
+
+[[connector.actions.inputs]]
+key = "cardId"
+label = "Card"
+required = true
+description = "The card id (24 hex characters) or the short link from its URL, trello.com/c/<shortLink>."
+
+[[connector.actions]]
+type = "listBoards"
+label = "List boards"
+description = "The boards the token’s member belongs to, open ones by default."
+outputs = [{ key = "items", description = "One entry per board: id, name, desc, closed, idOrganization, url, shortUrl, dateLastActivity" }]
+
+[[connector.actions.inputs]]
+key = "filter"
+label = "Filter"
+description = "all, or a comma-separated list of closed, members, open, organization, public, starred. Defaults to open."
+
+[[connector.actions]]
+type = "listLists"
+label = "List lists on a board"
+description = "The lists of a board, open ones by default."
+outputs = [{ key = "items", description = "One entry per list: id, name, closed, idBoard, pos" }]
+
+[[connector.actions.inputs]]
+key = "boardId"
+label = "Board"
+required = true
+description = "The board id or the short link from its URL, trello.com/b/<shortLink>/…."
+
+[[connector.actions.inputs]]
+key = "filter"
+label = "Filter"
+description = "all, closed, none or open. Defaults to open."
+
+[[connector.actions]]
+type = "listCards"
+label = "List cards in a list"
+description = "The open cards of a list."
+outputs = [{ key = "items", description = "One entry per card, in the card shape getCard returns" }]
+
+[[connector.actions.inputs]]
+key = "listId"
+label = "List"
+required = true
+description = "The id of the list."
+
+[[connector.actions]]
+type = "searchCards"
+label = "Search cards"
+description = "Find cards matching a query across the member’s boards or the given ones."
+outputs = [{ key = "cards", description = "The matching cards with their list and board" }, { key = "count", type = "number", description = "How many cards came back" }]
+
+[[connector.actions.inputs]]
+key = "query"
+label = "Query"
+required = true
+description = "The search query, 1 to 16384 characters; Trello’s search operators such as due:week and label:red work here."
+
+[[connector.actions.inputs]]
+key = "boardIds"
+label = "Board ids"
+description = "mine, or a comma-separated list of board ids to search in. Blank searches every board the member can see."
+
+[[connector.actions.inputs]]
+key = "limit"
+label = "Limit"
+type = "number"
+description = "The maximum number of cards to return, 1 to 1000. Defaults to 10."
+
+[[connector.actions.inputs]]
+key = "partial"
+label = "Partial"
+type = "boolean"
+description = "Match content that starts with any of the words in the query."

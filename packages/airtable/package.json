@@ -46,6 +46,7 @@
     "vitest": "^4.1.10"
   },
   "vorn": {
+    "publisher": "Vorn",
     "category": "Productivity",
     "keywords": [
       "airtable",
@@ -56,6 +57,8 @@
       "database"
     ],
     "auth": "Paste an Airtable personal access token with data.records:read, data.records:write and schema.bases:read, granted access to the bases it should reach. There is no Airtable CLI to sign in with.",
-    "packs": true
+    "hosts": [
+      "api.airtable.com"
+    ]
   }
 }

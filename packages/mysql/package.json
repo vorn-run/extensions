@@ -45,6 +45,7 @@
     "vitest": "^4.1.10"
   },
   "vorn": {
+    "publisher": "Vorn",
     "category": "Data & observability",
     "keywords": [
       "mysql",
@@ -54,7 +55,6 @@
       "rows",
       "tables"
     ],
-    "auth": "Paste the database's connection URL (mysql://user:password@host:3306/database) from your provider's dashboard or your DBA; SELECT, INSERT, UPDATE or DELETE on the tables the workflow touches, as the steps demand, is enough.",
-    "packs": true
+    "auth": "Paste the database's connection URL (mysql://user:password@host:3306/database) from your provider's dashboard or your DBA; SELECT, INSERT, UPDATE or DELETE on the tables the workflow touches, as the steps demand, is enough."
   }
 }

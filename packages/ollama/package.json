@@ -48,6 +48,7 @@
     "vitest": "^4.1.10"
   },
   "vorn": {
+    "publisher": "Vorn",
     "category": "AI",
     "keywords": [
       "ollama",
@@ -61,6 +62,11 @@
       "gemma"
     ],
     "auth": "Nothing to sign in with: Ollama serves http://localhost:11434 without credentials. Set OLLAMA_HOST for another server and OLLAMA_API_KEY for a hosted one.",
-    "packs": true
+    "hosts": [
+      "localhost"
+    ],
+    "hostsFrom": [
+      "OLLAMA_HOST"
+    ]
   }
 }
