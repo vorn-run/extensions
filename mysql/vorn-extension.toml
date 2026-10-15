@@ -1,7 +1,7 @@
 id = "mysql"
 name = "MySQL"
 version = "0.1.1"
-api = "vorn:connector@1"
+api = "vorn:extension@0.9"
 publisher = "Vorn"
 description = "Trigger workflows from new or updated rows in a MySQL or MariaDB database, and query or write to it from a step."
 
@@ -14,6 +14,8 @@ command = ["node", "index.js"]
 
 [checks]
 command = ["node", "index.js", "--check"]
+
+[connector]
 
 [connector.auth]
 rung = "key"

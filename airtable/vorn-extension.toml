@@ -1,7 +1,7 @@
 id = "airtable"
 name = "Airtable"
 version = "0.1.1"
-api = "vorn:connector@1"
+api = "vorn:extension@0.9"
 publisher = "Vorn"
 description = "Trigger workflows from new or updated Airtable records, and create, update, upsert, delete or read records and base schemas from a step."
 
@@ -17,6 +17,8 @@ command = ["node", "index.js", "--check"]
 
 [declares]
 network = ["api.airtable.com"]
+
+[connector]
 
 [connector.auth]
 rung = "key"

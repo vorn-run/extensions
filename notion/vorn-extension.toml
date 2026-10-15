@@ -1,7 +1,7 @@
 id = "notion"
 name = "Notion"
 version = "0.1.3"
-api = "vorn:connector@1"
+api = "vorn:extension@0.9"
 publisher = "Vorn"
 description = "Trigger workflows from Notion database pages, and create or update them."
 
@@ -17,6 +17,8 @@ command = ["node", "index.js", "--check"]
 
 [declares]
 network = ["api.notion.com"]
+
+[connector]
 
 [connector.auth]
 rung = "key"

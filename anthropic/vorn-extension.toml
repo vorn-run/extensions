@@ -1,7 +1,7 @@
 id = "anthropic"
 name = "Anthropic"
 version = "0.1.1"
-api = "vorn:connector@1"
+api = "vorn:extension@0.9"
 publisher = "Vorn"
 description = "Trigger workflows when a message batch finishes or a model becomes available, and create messages, count tokens, list models and run message batches from a step."
 
@@ -17,6 +17,8 @@ command = ["node", "index.js", "--check"]
 
 [declares]
 network = ["api.anthropic.com"]
+
+[connector]
 
 [connector.auth]
 rung = "key"

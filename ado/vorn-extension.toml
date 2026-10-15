@@ -1,7 +1,7 @@
 id = "ado"
 name = "Azure DevOps"
 version = "0.4.1"
-api = "vorn:connector@1"
+api = "vorn:extension@0.9"
 publisher = "Vorn"
 description = "Trigger workflows from work items and pull requests, and review, comment, vote and update from a step."
 
@@ -17,6 +17,8 @@ command = ["node", "index.js", "--check"]
 
 [declares]
 network = ["dev.azure.com", "*.dev.azure.com", "*.visualstudio.com"]
+
+[connector]
 
 [connector.auth]
 rung = "cli"

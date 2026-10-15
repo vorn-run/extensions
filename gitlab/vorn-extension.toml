@@ -1,7 +1,7 @@
 id = "gitlab"
 name = "GitLab"
 version = "0.1.2"
-api = "vorn:connector@1"
+api = "vorn:extension@0.9"
 publisher = "Vorn"
 description = "Trigger workflows from GitLab issues, merge requests and pipeline results, and create or comment on issues and merge requests from a step."
 
@@ -18,6 +18,8 @@ command = ["node", "index.js", "--check"]
 [declares]
 network = ["gitlab.com"]
 network_from = ["GITLAB_BASE_URL"]
+
+[connector]
 
 [connector.auth]
 rung = "cli"

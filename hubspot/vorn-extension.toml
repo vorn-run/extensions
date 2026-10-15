@@ -1,7 +1,7 @@
 id = "hubspot"
 name = "HubSpot"
 version = "0.1.1"
-api = "vorn:connector@1"
+api = "vorn:extension@0.9"
 publisher = "Vorn"
 description = "Trigger workflows from new HubSpot contacts, companies and deals or deal stage changes, and create, update, search, annotate or associate CRM records from a step."
 
@@ -17,6 +17,8 @@ command = ["node", "index.js", "--check"]
 
 [declares]
 network = ["api.hubapi.com"]
+
+[connector]
 
 [connector.auth]
 rung = "key"

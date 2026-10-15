@@ -1,7 +1,7 @@
 id = "jira"
 name = "Jira"
 version = "0.1.1"
-api = "vorn:connector@1"
+api = "vorn:extension@0.9"
 publisher = "Vorn"
 description = "Trigger workflows when a Jira Cloud issue is created, updated or moved to a status, and create, edit, transition, comment on, assign, read or search issues from a step."
 
@@ -18,6 +18,8 @@ command = ["node", "index.js", "--check"]
 [declares]
 network = ["*.atlassian.net", "api.atlassian.com"]
 network_from = ["JIRA_SITE_URL"]
+
+[connector]
 
 [connector.auth]
 rung = "key"

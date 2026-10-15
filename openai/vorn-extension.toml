@@ -1,7 +1,7 @@
 id = "openai"
 name = "OpenAI"
 version = "0.1.1"
-api = "vorn:connector@1"
+api = "vorn:extension@0.9"
 publisher = "Vorn"
 description = "Trigger workflows when an OpenAI batch or fine-tuning job finishes or a file is uploaded, and create responses, chat completions, embeddings, moderations and batches from a step."
 
@@ -17,6 +17,8 @@ command = ["node", "index.js", "--check"]
 
 [declares]
 network = ["api.openai.com"]
+
+[connector]
 
 [connector.auth]
 rung = "key"

@@ -1,7 +1,7 @@
 id = "github"
 name = "GitHub"
 version = "0.3.0"
-api = "vorn:connector@1"
+api = "vorn:extension@0.9"
 publisher = "Vorn"
 description = "Trigger workflows from GitHub issues and pull requests; comment, review, approve and merge from a step."
 
@@ -17,6 +17,8 @@ command = ["node", "index.js", "--check"]
 
 [declares]
 network = ["api.github.com", "github.com", "uploads.github.com"]
+
+[connector]
 
 [connector.auth]
 rung = "cli"

@@ -1,7 +1,7 @@
 id = "kusto"
 name = "Azure Data Explorer"
 version = "0.6.3"
-api = "vorn:connector@1"
+api = "vorn:extension@0.9"
 publisher = "Vorn"
 description = "Trigger workflows from the rows a KQL query returns."
 
@@ -18,6 +18,8 @@ command = ["node", "index.js", "--check"]
 [declares]
 network = ["*.kusto.windows.net"]
 network_from = ["KUSTO_CLUSTER"]
+
+[connector]
 
 [connector.auth]
 rung = "cli"

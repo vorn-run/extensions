@@ -1,7 +1,7 @@
 id = "substack"
 name = "Substack"
 version = "0.2.4"
-api = "vorn:connector@1"
+api = "vorn:extension@0.9"
 publisher = "Vorn"
 description = "Trigger workflows from new posts on a Substack publication, and read, search, like, restack and comment on posts, post and read Notes, or save and update a draft with pictures from a step."
 
@@ -17,6 +17,8 @@ command = ["node", "index.js", "--check"]
 
 [declares]
 network = ["substack.com", "*.substack.com"]
+
+[connector]
 
 [connector.auth]
 rung = "browser"

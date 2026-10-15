@@ -94938,7 +94938,7 @@ var init_esm8 = __esm({
   }
 });
 
-// ../e4-connectors/packages/connector-sdk/dist/chunk-SLU654P6.js
+// ../e4-connectors/packages/connector-sdk/dist/chunk-TPBIZCEC.js
 import { builtinModules } from "module";
 var LOOPBACK_HOSTS = ["127.0.0.1", "localhost", "[::1]"];
 function loopbackEndpoint(env, names, fail = (message) => new Error(message)) {

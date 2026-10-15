@@ -1,7 +1,7 @@
 id = "ollama"
 name = "Ollama"
 version = "0.1.1"
-api = "vorn:connector@1"
+api = "vorn:extension@0.9"
 publisher = "Vorn"
 description = "Trigger workflows when a local Ollama model is added, updated or loaded into memory, and chat, generate, embed, and list, show, pull, copy or delete models from a step."
 
@@ -18,6 +18,8 @@ command = ["node", "index.js", "--check"]
 [declares]
 network = ["localhost"]
 network_from = ["OLLAMA_HOST"]
+
+[connector]
 
 [connector.auth]
 rung = "none"
