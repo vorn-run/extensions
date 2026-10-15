@@ -1,3 +1,3 @@
-import shared from '../../vitest.shared.ts'
+import shared from '../vitest.shared.ts'
 
 export default shared
