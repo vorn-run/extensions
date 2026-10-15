@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-# Live checks for packages/gitlab against a real GitLab instance.
+# Live checks for gitlab against a real GitLab instance.
 #
 # Needs GITLAB_TOKEN: a personal access token with read_api (api to also
 # exercise the write actions). Optional: GITLAB_PROJECT (default
@@ -16,8 +16,8 @@ if [ -z "${GITLAB_TOKEN:-}" ]; then
   exit 0
 fi
 
-if [ ! -d "packages/$PKG" ]; then
-  echo "packages/$PKG does not exist yet; nothing to check" >&2
+if [ ! -d "$PKG" ]; then
+  echo "$PKG does not exist yet; nothing to check" >&2
   exit 1
 fi
 
@@ -26,4 +26,4 @@ export GITLAB_BASE_URL="${GITLAB_BASE_URL:-https://gitlab.com}"
 
 yarn workspace "$NAME" build
 CLI="$(node -p "require('fs').realpathSync('node_modules/@vornrun/connector-sdk/dist/cli.js')")"
-(cd "packages/$PKG" && node "$CLI" check ./dist/index.js --live)
+(cd "$PKG" && node "$CLI" check ./dist/index.js --live)

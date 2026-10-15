@@ -38,8 +38,8 @@
           "launch"
         ]
       },
-      "git": "https://github.com/vorn-run/connectors.git",
-      "path": "extensions/ado",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "ado",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -145,6 +145,11 @@
           "required": false,
           "description": "Upper bound on work items read in one poll."
         }
+      ],
+      "hosts": [
+        "dev.azure.com",
+        "*.dev.azure.com",
+        "*.visualstudio.com"
       ]
     },
     {
@@ -185,8 +190,8 @@
           "mock"
         ]
       },
-      "git": "https://github.com/vorn-run/connectors.git",
-      "path": "extensions/airtable",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "airtable",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -280,6 +285,9 @@
           "required": false,
           "description": "The name of a \"Last modified time\" field in the table, for the updated-record trigger. Blank falls back to LAST_MODIFIED_TIME() and the poll time."
         }
+      ],
+      "hosts": [
+        "api.airtable.com"
       ]
     },
     {
@@ -321,8 +329,8 @@
           "mock"
         ]
       },
-      "git": "https://github.com/vorn-run/connectors.git",
-      "path": "extensions/anthropic",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "anthropic",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -390,6 +398,9 @@
           "required": true,
           "description": "An API key from console.anthropic.com/settings/keys, for a single workspace."
         }
+      ],
+      "hosts": [
+        "api.anthropic.com"
       ]
     },
     {
@@ -432,8 +443,8 @@
           "mock"
         ]
       },
-      "git": "https://github.com/vorn-run/connectors.git",
-      "path": "extensions/discord",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "discord",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -530,6 +541,9 @@
           "required": false,
           "description": "Pages of 100 messages or 1000 members one poll walks before leaving the rest for the next."
         }
+      ],
+      "hosts": [
+        "discord.com"
       ]
     },
     {
@@ -566,8 +580,8 @@
           "launch"
         ]
       },
-      "git": "https://github.com/vorn-run/connectors.git",
-      "path": "extensions/github",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "github",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -659,6 +673,11 @@
           "required": false,
           "description": "Comma-separated. Applies to the issue trigger only."
         }
+      ],
+      "hosts": [
+        "api.github.com",
+        "github.com",
+        "uploads.github.com"
       ]
     },
     {
@@ -700,8 +719,8 @@
           "mock"
         ]
       },
-      "git": "https://github.com/vorn-run/connectors.git",
-      "path": "extensions/gitlab",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "gitlab",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -778,6 +797,12 @@
           "required": false,
           "description": "Branch or tag whose pipelines to watch. Blank for every ref."
         }
+      ],
+      "hosts": [
+        "gitlab.com"
+      ],
+      "hostsFrom": [
+        "GITLAB_BASE_URL"
       ]
     },
     {
@@ -819,8 +844,8 @@
           "mock"
         ]
       },
-      "git": "https://github.com/vorn-run/connectors.git",
-      "path": "extensions/hubspot",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "hubspot",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -932,6 +957,9 @@
           "required": false,
           "description": "A stage id such as closedwon or a numeric custom stage id; the stage-changed trigger then fires only for deals reaching it."
         }
+      ],
+      "hosts": [
+        "api.hubapi.com"
       ]
     },
     {
@@ -973,8 +1001,8 @@
           "mock"
         ]
       },
-      "git": "https://github.com/vorn-run/connectors.git",
-      "path": "extensions/jira",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "jira",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1083,6 +1111,13 @@
           "required": false,
           "description": "The status name the issueTransitioned trigger watches for, such as Done. Only that trigger reads it."
         }
+      ],
+      "hosts": [
+        "*.atlassian.net",
+        "api.atlassian.com"
+      ],
+      "hostsFrom": [
+        "JIRA_SITE_URL"
       ]
     },
     {
@@ -1121,8 +1156,8 @@
           "launch"
         ]
       },
-      "git": "https://github.com/vorn-run/connectors.git",
-      "path": "extensions/kusto",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "kusto",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1184,6 +1219,12 @@
           "required": false,
           "description": "How far back the very first poll looks, e.g. 30m, 2h, 7d."
         }
+      ],
+      "hosts": [
+        "*.kusto.windows.net"
+      ],
+      "hostsFrom": [
+        "KUSTO_CLUSTER"
       ]
     },
     {
@@ -1220,8 +1261,8 @@
           "launch"
         ]
       },
-      "git": "https://github.com/vorn-run/connectors.git",
-      "path": "extensions/linear",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "linear",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1275,6 +1316,9 @@
           "name": "LINEAR_LIMIT",
           "required": false
         }
+      ],
+      "hosts": [
+        "api.linear.app"
       ]
     },
     {
@@ -1313,8 +1357,8 @@
           "launch"
         ]
       },
-      "git": "https://github.com/vorn-run/connectors.git",
-      "path": "extensions/mysql",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "mysql",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1470,8 +1514,8 @@
           "launch"
         ]
       },
-      "git": "https://github.com/vorn-run/connectors.git",
-      "path": "extensions/notion",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "notion",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1533,6 +1577,9 @@
           "name": "NOTION_LIMIT",
           "required": false
         }
+      ],
+      "hosts": [
+        "api.notion.com"
       ]
     },
     {
@@ -1576,8 +1623,8 @@
           "mock"
         ]
       },
-      "git": "https://github.com/vorn-run/connectors.git",
-      "path": "extensions/ollama",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "ollama",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1654,6 +1701,12 @@
           "required": false,
           "description": "The server origin, http://localhost:11434 by default. A trailing / or /api is stripped and a bare host:port gets http://."
         }
+      ],
+      "hosts": [
+        "localhost"
+      ],
+      "hostsFrom": [
+        "OLLAMA_HOST"
       ]
     },
     {
@@ -1698,8 +1751,8 @@
           "mock"
         ]
       },
-      "git": "https://github.com/vorn-run/connectors.git",
-      "path": "extensions/openai",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "openai",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1806,6 +1859,9 @@
           "required": false,
           "description": "How far before the watermark the fine-tuning poll reads, because a job is created long before it finishes."
         }
+      ],
+      "hosts": [
+        "api.openai.com"
       ]
     },
     {
@@ -1844,8 +1900,8 @@
           "launch"
         ]
       },
-      "git": "https://github.com/vorn-run/connectors.git",
-      "path": "extensions/postgres",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "postgres",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1982,8 +2038,8 @@
           "launch"
         ]
       },
-      "git": "https://github.com/vorn-run/connectors.git",
-      "path": "extensions/rss",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "rss",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -2037,6 +2093,9 @@
           "required": false,
           "description": "Sent with every request; some hosts refuse requests without one."
         }
+      ],
+      "hostsFrom": [
+        "RSS_FEEDS"
       ]
     },
     {
@@ -2078,8 +2137,8 @@
           "mock"
         ]
       },
-      "git": "https://github.com/vorn-run/connectors.git",
-      "path": "extensions/slack",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "slack",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -2166,6 +2225,10 @@
           "required": false,
           "description": "Messages read per request, 1 to 999."
         }
+      ],
+      "hosts": [
+        "slack.com",
+        "files.slack.com"
       ]
     },
     {
@@ -2207,8 +2270,8 @@
           "mock"
         ]
       },
-      "git": "https://github.com/vorn-run/connectors.git",
-      "path": "extensions/stripe",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "stripe",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -2300,6 +2363,10 @@
           "required": false,
           "description": "How far before now the failed-invoice poll reads open invoices. A day by default, because retries are days apart."
         }
+      ],
+      "hosts": [
+        "api.stripe.com",
+        "files.stripe.com"
       ]
     },
     {
@@ -2340,8 +2407,8 @@
           "launch"
         ]
       },
-      "git": "https://github.com/vorn-run/connectors.git",
-      "path": "extensions/substack",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "substack",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -2458,6 +2525,10 @@
           "required": false,
           "description": "Your publication's substack.com subdomain, such as exampleletter. The new-post trigger reads its feed, and a step that names no publication uses it."
         }
+      ],
+      "hosts": [
+        "substack.com",
+        "*.substack.com"
       ]
     },
     {
@@ -2495,8 +2566,8 @@
           "launch"
         ]
       },
-      "git": "https://github.com/vorn-run/connectors.git",
-      "path": "extensions/telegram",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "telegram",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -2553,6 +2624,9 @@
           "required": false,
           "description": "1 to 100. Anything left over is read by the next poll."
         }
+      ],
+      "hosts": [
+        "api.telegram.org"
       ]
     },
     {
@@ -2593,8 +2667,8 @@
           "mock"
         ]
       },
-      "git": "https://github.com/vorn-run/connectors.git",
-      "path": "extensions/trello",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "trello",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -2706,6 +2780,9 @@
           "required": false,
           "description": "For the card-due-soon trigger: how many hours ahead a due date must fall to fire."
         }
+      ],
+      "hosts": [
+        "api.trello.com"
       ]
     },
     {
@@ -2746,8 +2823,8 @@
           "mock"
         ]
       },
-      "git": "https://github.com/vorn-run/connectors.git",
-      "path": "extensions/x",
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "x",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -2829,6 +2906,11 @@
           "required": false,
           "description": "Recent-search query the \"new search result\" trigger polls, such as `from:xdevelopers -is:retweet`."
         }
+      ],
+      "hosts": [
+        "api.x.com",
+        "api.twitter.com",
+        "upload.twitter.com"
       ]
     }
   ],

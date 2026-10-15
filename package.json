@@ -1,10 +1,31 @@
 {
-  "name": "vorn-connectors",
+  "name": "vorn-extensions",
   "private": true,
   "type": "module",
   "packageManager": "yarn@4.10.3",
   "workspaces": [
-    "packages/*"
+    "ado",
+    "airtable",
+    "anthropic",
+    "discord",
+    "github",
+    "gitlab",
+    "hubspot",
+    "jira",
+    "kusto",
+    "linear",
+    "mysql",
+    "notion",
+    "ollama",
+    "openai",
+    "postgres",
+    "rss",
+    "slack",
+    "stripe",
+    "substack",
+    "telegram",
+    "trello",
+    "x"
   ],
   "scripts": {
     "build": "yarn workspaces foreach -Apt run build",

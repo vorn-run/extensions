@@ -15,6 +15,7 @@
  *
  * Run with --check to verify the committed file matches, which is what CI does.
  */
+import { extensionDirs } from './extensions.mjs'
 import { readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs'
 import { pathToFileURL } from 'node:url'
 import { resolve } from 'node:path'
@@ -25,8 +26,8 @@ const CATALOG_VERSION = 1
 /** Written by `yarn conformance`, committed, and quoted here as the verified badge. */
 const RECEIPT_FILE = 'verified.json'
 /** The repository Vorn installs a connector from, and the folder `build-extensions.mjs` writes it to. */
-const GIT_URL = 'https://github.com/vorn-run/connectors.git'
-const FOLDER = (id) => `extensions/${id}`
+const GIT_URL = 'https://github.com/vorn-run/extensions.git'
+const FOLDER = (id) => id
 
 /** Trim an action's inputs down to what someone deciding would want to see. */
 function summarize(entries) {
@@ -59,7 +60,7 @@ function requiredEnv(manifest) {
 
 /** A connector's conformance receipt, if it has been run and committed. */
 function receiptFor(dir) {
-  const path = `packages/${dir}/${RECEIPT_FILE}`
+  const path = `${dir}/${RECEIPT_FILE}`
   if (!existsSync(path)) return undefined
   const receipt = JSON.parse(readFileSync(path, 'utf8'))
   return {
@@ -71,17 +72,17 @@ function receiptFor(dir) {
 }
 
 async function entryFor(dir) {
-  const pkg = JSON.parse(readFileSync(`packages/${dir}/package.json`, 'utf8'))
-  const built = resolve(`packages/${dir}/dist/index.js`)
+  const pkg = JSON.parse(readFileSync(`${dir}/package.json`, 'utf8'))
+  const built = resolve(`${dir}/dist/index.js`)
   if (!existsSync(built)) {
-    throw new Error(`packages/${dir} is not built — run \`yarn build\` first`)
+    throw new Error(`${dir} is not built — run \`yarn build\` first`)
   }
 
   const module = await import(pathToFileURL(built).href)
   const connector = Object.values(module).find(
     (value) => value && typeof value === 'object' && 'id' in value && 'triggers' in value
   )
-  if (!connector) throw new Error(`packages/${dir} exports no connector`)
+  if (!connector) throw new Error(`${dir} exports no connector`)
 
   const manifest = connectorManifest(connector)
   const listing = pkg.vorn ?? {}
@@ -113,14 +114,14 @@ async function entryFor(dir) {
     ...(manifest.icon && { icon: manifest.icon }),
     triggers: summarize(manifest.triggers),
     actions: summarize(manifest.actions),
-    env: requiredEnv(manifest)
+    env: requiredEnv(manifest),
+    // What it reaches, so the catalog can say so before anything is installed.
+    ...(listing.hosts && { hosts: listing.hosts }),
+    ...(listing.hostsFrom && { hostsFrom: listing.hostsFrom })
   }
 }
 
-const dirs = readdirSync('packages', { withFileTypes: true })
-  .filter((entry) => entry.isDirectory())
-  .map((entry) => entry.name)
-  .sort()
+const dirs = extensionDirs()
 
 const connectors = []
 for (const dir of dirs) connectors.push(await entryFor(dir))

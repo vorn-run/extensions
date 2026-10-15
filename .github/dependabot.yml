@@ -1,6 +1,6 @@
 version: 2
 updates:
-  # The workspace root carries yarn.lock, so this one entry covers every package under packages/.
+  # The workspace root carries yarn.lock, so this one entry covers every extension folder.
   - package-ecosystem: npm
     directory: /
     schedule:
