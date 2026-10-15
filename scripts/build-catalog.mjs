@@ -28,6 +28,13 @@ const RECEIPT_FILE = 'verified.json'
 /** The repository Vorn installs a connector from, and the folder `build-extensions.mjs` writes it to. */
 const GIT_URL = 'https://github.com/vorn-run/extensions.git'
 const FOLDER = (id) => id
+/**
+ * Where a release carries the 0.8 pack of a version, under the tag that
+ * published it. Kept while Vorn releases that install from packUrl are still
+ * in use; a Vorn that installs from git reads git and path instead.
+ */
+const PACK_URL = (dir, id, version) =>
+  `https://github.com/vorn-run/extensions/releases/download/${dir}-v${version}/${id}-${version}.vorn.tgz`
 
 /** Trim an action's inputs down to what someone deciding would want to see. */
 function summarize(entries) {
@@ -111,6 +118,7 @@ async function entryFor(dir) {
       git: GIT_URL,
       path: FOLDER(manifest.id)
     }),
+    packUrl: PACK_URL(dir, manifest.id, pkg.version),
     ...(manifest.icon && { icon: manifest.icon }),
     triggers: summarize(manifest.triggers),
     actions: summarize(manifest.actions),

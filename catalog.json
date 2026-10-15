@@ -40,6 +40,7 @@
       },
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "ado",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/ado-v0.4.1/ado-0.4.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -192,6 +193,7 @@
       },
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "airtable",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/airtable-v0.1.1/airtable-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -331,6 +333,7 @@
       },
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "anthropic",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/anthropic-v0.1.1/anthropic-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -445,6 +448,7 @@
       },
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "discord",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/discord-v0.1.1/discord-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -582,6 +586,7 @@
       },
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "github",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/github-v0.3.0/github-0.3.0.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -721,6 +726,7 @@
       },
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "gitlab",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/gitlab-v0.1.2/gitlab-0.1.2.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -846,6 +852,7 @@
       },
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "hubspot",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/hubspot-v0.1.1/hubspot-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1003,6 +1010,7 @@
       },
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "jira",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/jira-v0.1.1/jira-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1158,6 +1166,7 @@
       },
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "kusto",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/kusto-v0.6.3/kusto-0.6.3.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1263,6 +1272,7 @@
       },
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "linear",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/linear-v0.1.3/linear-0.1.3.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1359,6 +1369,7 @@
       },
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "mysql",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/mysql-v0.1.1/mysql-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1516,6 +1527,7 @@
       },
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "notion",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/notion-v0.1.3/notion-0.1.3.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1625,6 +1637,7 @@
       },
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "ollama",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/ollama-v0.1.1/ollama-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1753,6 +1766,7 @@
       },
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "openai",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/openai-v0.1.1/openai-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -1902,6 +1916,7 @@
       },
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "postgres",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/postgres-v0.1.2/postgres-0.1.2.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -2040,6 +2055,7 @@
       },
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "rss",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/rss-v0.1.3/rss-0.1.3.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -2139,6 +2155,7 @@
       },
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "slack",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/slack-v0.1.2/slack-0.1.2.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -2272,6 +2289,7 @@
       },
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "stripe",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/stripe-v0.1.1/stripe-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -2409,6 +2427,7 @@
       },
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "substack",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/substack-v0.2.4/substack-0.2.4.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -2568,6 +2587,7 @@
       },
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "telegram",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/telegram-v0.1.1/telegram-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -2669,6 +2689,7 @@
       },
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "trello",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/trello-v0.1.1/trello-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
@@ -2825,6 +2846,7 @@
       },
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "x",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/x-v0.1.1/x-0.1.1.vorn.tgz",
       "icon": {
         "viewBox": "0 0 24 24",
         "paths": [
