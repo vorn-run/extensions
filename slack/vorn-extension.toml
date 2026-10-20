@@ -1,7 +1,7 @@
 id = "slack"
 name = "Slack"
 version = "0.1.2"
-api = "vorn:extension@0.9"
+api = "vorn:extension@1.0"
 publisher = "Vorn"
 description = "Trigger workflows from Slack messages, thread replies and channel members, and post, reply or react from a step."
 

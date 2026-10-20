@@ -1,7 +1,7 @@
 id = "airtable"
 name = "Airtable"
 version = "0.1.1"
-api = "vorn:extension@0.9"
+api = "vorn:extension@1.0"
 publisher = "Vorn"
 description = "Trigger workflows from new or updated Airtable records, and create, update, upsert, delete or read records and base schemas from a step."
 

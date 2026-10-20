@@ -1,7 +1,7 @@
 id = "stripe"
 name = "Stripe"
 version = "0.1.1"
-api = "vorn:extension@0.9"
+api = "vorn:extension@1.0"
 publisher = "Vorn"
 description = "Trigger workflows from new Stripe customers, succeeded payments and paid or failed invoices, and create customers, issue refunds or read balances and charges from a step."
 

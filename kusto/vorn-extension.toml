@@ -1,7 +1,7 @@
 id = "kusto"
 name = "Azure Data Explorer"
 version = "0.6.3"
-api = "vorn:extension@0.9"
+api = "vorn:extension@1.0"
 publisher = "Vorn"
 description = "Trigger workflows from the rows a KQL query returns."
 

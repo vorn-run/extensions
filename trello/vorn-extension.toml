@@ -1,7 +1,7 @@
 id = "trello"
 name = "Trello"
 version = "0.1.1"
-api = "vorn:extension@0.9"
+api = "vorn:extension@1.0"
 publisher = "Vorn"
 description = "Trigger workflows from cards created, moved, commented on or due soon on a Trello board, and create, update, move, comment on, label, archive, read and search cards from a step."
 

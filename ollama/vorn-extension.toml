@@ -1,7 +1,7 @@
 id = "ollama"
 name = "Ollama"
 version = "0.1.1"
-api = "vorn:extension@0.9"
+api = "vorn:extension@1.0"
 publisher = "Vorn"
 description = "Trigger workflows when a local Ollama model is added, updated or loaded into memory, and chat, generate, embed, and list, show, pull, copy or delete models from a step."
 

@@ -1,7 +1,7 @@
 id = "github"
 name = "GitHub"
 version = "0.3.0"
-api = "vorn:extension@0.9"
+api = "vorn:extension@1.0"
 publisher = "Vorn"
 description = "Trigger workflows from GitHub issues and pull requests; comment, review, approve and merge from a step."
 
