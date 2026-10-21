@@ -5,7 +5,14 @@ a folder of its own at the top of this repository. Vorn installs one from its
 folder: `vorn ext install https://github.com/vorn-run/extensions.git`, with the
 folder's name as the path, which is what the catalog names for each.
 
-The extensions here today are connectors. A connector is how a [Vorn](https://github.com/vorn-run/vorn) workflow reaches
+Vorn's own extensions written in Rust live here too: Worktree cleanup
+(`worktrees/`, a Wasm component) and the agent adapters (`adapters/<agent>/`,
+one manifest with an `[agent]` section per agent CLI). Each is released on its
+own as a pack, `<id>-<version>.vorn.tgz` with its sha256; Vorn's installer
+ships a pinned set of these so a first launch works offline, and installs and
+updates them like any other extension.
+
+The connectors are the rest. A connector is how a [Vorn](https://github.com/vorn-run/vorn) workflow reaches
 outside itself. It watches a system for something happening — a work item moving
 into a state, a query starting to return rows — and starts a workflow run when it
 does. Some connectors also expose actions a workflow step can call back out to.
@@ -62,6 +69,10 @@ and timestamp if they are not called `Id` and `Timestamp`.
 
 ```
 <id>/                one extension: its sources, vorn-extension.toml, index.js, verified.json
+worktrees/           Worktree cleanup: its crate, built as a Wasm component, and its manifest
+adapters/<agent>/    one agent adapter: its manifest, icon and the fixtures its tests replay
+adapters/tests/      the adapters' tests, run against the Vorn crates that read them
+tools/pack/          builds and packs each Rust extension, reproducibly
 templates/           workflows a new workflow can start from
 catalog.json         the list the app offers under Connections → Add
 scripts/             the builds and the checks CI runs
@@ -77,6 +88,23 @@ icon, triggers, actions and the settings it will ask for come out of its own
 manifest, so the list cannot advertise a trigger that has since been renamed.
 Run `node scripts/build-catalog.mjs` after changing a connector; CI checks the
 committed file still matches.
+
+### The Rust extensions
+
+`cargo run --release -p vorn-pack` builds every Rust extension and writes its
+pack, checksum and listing to `dist/`; `build-catalog.mjs` lists them from
+there, with the release's `packUrl` and the pack's `sha256`. The pack is the
+same bytes on every machine, so the checksum in the catalog is the one the
+release carries and the one Vorn pins; CI packs twice to check. They build
+against the Vorn crates of the commit `Cargo.toml` pins; the adapters' tests
+need Zig 0.16.0 for Vorn's terminal crates.
+
+A release is a tag naming the folder: `worktrees-v1.0.1`, or
+`adapters-claude-v1.0.1` for `adapters/claude`. Bump the manifest's
+`version`, add its `## <version>` section to the folder's `CHANGELOG.md`,
+re-run the packer and the catalog, and tag the merged commit. The release
+workflow packs the folder, refuses a pack that does not match the catalog, and
+attaches it with its `.sha256`.
 
 ## Contribute a template
 

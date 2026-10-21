@@ -1,7 +1,8 @@
 name: Release
 
-# Tagged per connector — `ado-v0.2.0` publishes only that package. A connector
-# releasing on its own schedule is the whole reason these live outside the app.
+# Tagged per extension — `ado-v0.2.0` publishes only that package, and
+# `adapters-claude-v1.0.0` only that adapter. An extension releasing on its own
+# schedule is the whole reason these live outside the app.
 on:
   push:
     tags:
@@ -11,7 +12,98 @@ permissions:
   contents: write
 
 jobs:
+  # A connector is an npm package; an extension written in Rust is a folder
+  # with a vorn-extension.toml and no package.json, released as its pack.
+  resolve:
+    runs-on: ubuntu-latest
+    outputs:
+      kind: ${{ steps.kind.outputs.kind }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: kind
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          name="${TAG%-v*}"
+          if [ -f "$name/package.json" ]; then
+            echo "kind=npm" >> "$GITHUB_OUTPUT"
+          else
+            echo "kind=rust" >> "$GITHUB_OUTPUT"
+          fi
+
+  # The pack Vorn installs and pins by checksum: built and tested at the tagged
+  # commit by the same packer CI runs, so its bytes are the ones catalog.json
+  # lists. A pack that does not match the catalog is not released.
+  pack:
+    needs: resolve
+    if: needs.resolve.outputs.kind == 'rust'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: 0.16.0
+      - name: Install the pinned toolchain
+        run: rustup show active-toolchain || rustup toolchain install
+      - run: cargo test --locked --release --workspace
+      - name: Pack the extension the tag names
+        env:
+          TAG: ${{ github.ref_name }}
+        run: cargo run --locked --release -p vorn-pack -- --tag "$TAG" --out release-assets
+      - name: Check the pack is the one the catalog lists
+        run: |
+          for listing in release-assets/*.vorn.json; do
+            id=$(node -p "require('./$listing').id")
+            sha=$(node -p "require('./$listing').sha256")
+            listed=$(node -p "(require('./catalog.json').connectors.find((c) => c.id === '$id') || {}).sha256")
+            if [ "$sha" != "$listed" ]; then
+              echo "::error::$id packs to $sha but catalog.json lists $listed"
+              exit 1
+            fi
+          done
+      # As for a connector: the notes come from the folder's CHANGELOG.md, and
+      # every value reaches the shell through env:, never as interpolated text.
+      - name: Take the notes from the changelog
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          name="${TAG%-v*}"
+          version="${TAG##*-v}"
+          dir="$name"
+          [ -d "$dir" ] || dir="${name/-//}"
+          changelog="$dir/CHANGELOG.md"
+          if [ ! -f "$changelog" ]; then
+            echo "::error::$changelog does not exist — a release needs notes"
+            exit 1
+          fi
+          awk -v v="## $version" '
+            $0 == v      { grab = 1; next }
+            grab && /^## / { exit }
+            grab         { print }
+          ' "$changelog" > release-notes.md
+          if [ -z "$(tr -d '[:space:]' < release-notes.md)" ]; then
+            echo "::error::$changelog has no '## $version' section"
+            exit 1
+          fi
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          {
+            echo
+            echo '---'
+            echo "sha256:"
+            cat release-assets/*.vorn.tgz.sha256
+          } >> release-notes.md
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --notes-file release-notes.md \
+            release-assets/*.vorn.tgz release-assets/*.vorn.tgz.sha256
+
   publish:
+    needs: resolve
+    if: needs.resolve.outputs.kind == 'npm'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

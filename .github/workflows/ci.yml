@@ -6,7 +6,39 @@ on:
   pull_request:
 
 jobs:
+  # The extensions written in Rust: built, tested against the Vorn crates they
+  # pin, and packed the way a release packs them, so the checksums the catalog
+  # lists are the ones a release will carry.
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # The adapters' tests read screens through Vorn's terminal crates, which build libghostty with Zig.
+      - uses: mlugg/setup-zig@v2
+        with:
+          version: 0.16.0
+      - name: Install the pinned toolchain
+        run: rustup show active-toolchain || rustup toolchain install
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --all --check
+      - run: cargo clippy --locked --workspace --all-targets -- -D warnings
+      - run: cargo test --locked --release --workspace
+      - name: Pack every Rust extension
+        run: cargo run --locked --release -p vorn-pack
+      # Packed twice from scratch: a release is only pinnable if the same commit packs to the same bytes.
+      - name: Check the packs are reproducible
+        run: |
+          mv dist dist-first
+          cargo clean --release --target wasm32-wasip2
+          cargo run --locked --release -p vorn-pack
+          diff -r dist-first dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rust-extensions
+          path: dist/
+
   check:
+    needs: rust
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -36,6 +68,12 @@ jobs:
       # canvas on someone else's machine rather than a failure here.
       - name: Check the templates would open
         run: node scripts/check-templates.mjs
+
+      # The Rust extensions are listed from what the packer wrote.
+      - uses: actions/download-artifact@v4
+        with:
+          name: rust-extensions
+          path: dist/
 
       # catalog.json is generated from the connectors' own manifests. Checking
       # it here means a renamed trigger cannot leave the app advertising the old
