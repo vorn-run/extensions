@@ -16,7 +16,9 @@
  * The extensions written in Rust are listed from what `tools/pack` wrote for
  * them in dist/ (their manifest's name, icon and version, and the checksum of
  * the pack a release of that version carries), so run
- * `cargo run --release -p vorn-pack` first.
+ * `cargo run --release -p vorn-pack` first. A component's Wasm differs by
+ * build host, and releases build on Linux, so take dist/ from CI's
+ * `rust-extensions` artifact when packing elsewhere.
  *
  * Run with --check to verify the committed file matches, which is what CI does.
  */

@@ -3056,7 +3056,7 @@
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "worktrees",
       "packUrl": "https://github.com/vorn-run/extensions/releases/download/worktrees-v1.0.0/vorn.worktrees-1.0.0.vorn.tgz",
-      "sha256": "479e6b554069a1deeae10a1688cabe6c3271a2217bd7656a39aa5c7f2a13574d",
+      "sha256": "d3b9571dca202b7d7df846fb7fe575271c679fa30663ee0bd32e0b7bba163889",
       "icon": {
         "paths": [
           "M6 2.5a2.5 2.5 0 1 1 0 5a2.5 2.5 0 1 1 0-5z",
