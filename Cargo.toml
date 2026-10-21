@@ -1,0 +1,32 @@
+# The extensions here written in Rust, and the tools that build and test them.
+# The connectors beside them are a Yarn workspace of their own.
+[workspace]
+resolver = "2"
+members = ["worktrees", "adapters", "tools/pack"]
+
+[workspace.package]
+edition = "2021"
+rust-version = "1.90"
+license = "MIT"
+publish = false
+
+# Vorn's crates, from the Vorn commit these extensions are built and tested against.
+[workspace.dependencies]
+vorn-extension-sdk = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72efeb225a95d45de48735a9412" }
+vorn-agents = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72efeb225a95d45de48735a9412" }
+vorn-analysis = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72efeb225a95d45de48735a9412" }
+vorn-extensions = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72efeb225a95d45de48735a9412" }
+vorn-hooks = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72efeb225a95d45de48735a9412" }
+vorn-recovery = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72efeb225a95d45de48735a9412" }
+vorn-screen = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72efeb225a95d45de48735a9412" }
+vorn-term-proto = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72efeb225a95d45de48735a9412" }
+
+# How every component here is built, as Vorn built them: the artifact's checksum depends on it.
+[profile.release]
+lto = true
+codegen-units = 1
+strip = "symbols"
+
+# Vorn's terminal crates build libghostty from the copy Vorn vendors, as Vorn's own workspace does.
+[patch."https://github.com/uzaaft/libghostty-rs"]
+libghostty-vt-sys = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72efeb225a95d45de48735a9412" }

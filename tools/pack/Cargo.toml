@@ -1,0 +1,16 @@
+[package]
+name = "vorn-pack"
+version = "0.0.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "Builds the Rust extensions here and packs each into the same bytes on every machine, so its release carries a checksum Vorn can pin"
+
+[dependencies]
+flate2 = "1"
+sha2 = "0.10"
+tar = { version = "0.4", default-features = false }
+toml = { version = "1.1", default-features = false, features = ["parse", "serde", "std"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"

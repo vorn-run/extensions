@@ -1,0 +1,26 @@
+[package]
+name = "vorn-adapters"
+version = "1.0.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "The agent adapters: one extension package per agent CLI, each a manifest with an [agent] section and its files. This crate only tests them against Vorn's agent crates."
+
+[lib]
+test = false
+doctest = false
+
+[dev-dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+toml = { version = "1.1", default-features = false, features = ["parse", "serde", "std"] }
+tempfile = "3"
+rusqlite = { version = "0.40", features = ["bundled"] }
+vorn-agents.workspace = true
+vorn-analysis.workspace = true
+vorn-extensions.workspace = true
+vorn-hooks.workspace = true
+vorn-recovery.workspace = true
+vorn-screen.workspace = true
+vorn-term-proto.workspace = true

@@ -13,9 +13,14 @@
  * in — live in that package's own package.json under "vorn". Nothing about a
  * connector is described anywhere but its own directory.
  *
+ * The extensions written in Rust are listed from what `tools/pack` wrote for
+ * them in dist/ (their manifest's name, icon and version, and the checksum of
+ * the pack a release of that version carries), so run
+ * `cargo run --release -p vorn-pack` first.
+ *
  * Run with --check to verify the committed file matches, which is what CI does.
  */
-import { extensionDirs } from './extensions.mjs'
+import { extensionDirs, rustExtensionDirs } from './extensions.mjs'
 import { readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs'
 import { pathToFileURL } from 'node:url'
 import { resolve } from 'node:path'
@@ -35,6 +40,12 @@ const FOLDER = (id) => id
  */
 const PACK_URL = (dir, id, version) =>
   `https://github.com/vorn-run/extensions/releases/download/${dir}-v${version}/${id}-${version}.vorn.tgz`
+
+/**
+ * The release tag of a Rust extension's folder: `adapters/claude` at 1.0.0 is
+ * `adapters-claude-v1.0.0`, which `tools/pack --tag` reads back.
+ */
+const RUST_TAG = (dir, version) => `${dir.replace('/', '-')}-v${version}`
 
 /** Trim an action's inputs down to what someone deciding would want to see. */
 function summarize(entries) {
@@ -129,17 +140,47 @@ async function entryFor(dir) {
   }
 }
 
+/**
+ * A Rust extension's entry: what installs it is its release's pack, which Vorn
+ * fetches and admits only when the bytes match `sha256`.
+ */
+function rustEntryFor(dir) {
+  const toml = readFileSync(`${dir}/vorn-extension.toml`, 'utf8')
+  const field = (name) => toml.match(new RegExp(`^${name} = "([^"]*)"`, 'm'))?.[1]
+  const id = field('id')
+  const version = field('version')
+  const listed = `dist/${id}-${version}.vorn.json`
+  if (!existsSync(listed)) {
+    throw new Error(`${dir} is not packed — run \`cargo run --release -p vorn-pack\` first`)
+  }
+  const pack = JSON.parse(readFileSync(listed, 'utf8'))
+  return {
+    id: pack.id,
+    name: pack.name,
+    description: pack.description,
+    kind: 'extension',
+    version: pack.version,
+    capabilities: [],
+    git: GIT_URL,
+    path: dir,
+    packUrl: `https://github.com/vorn-run/extensions/releases/download/${RUST_TAG(dir, version)}/${id}-${version}.vorn.tgz`,
+    sha256: pack.sha256,
+    ...(pack.icon && { icon: pack.icon })
+  }
+}
+
 const dirs = extensionDirs()
 
 const connectors = []
 for (const dir of dirs) connectors.push(await entryFor(dir))
+for (const dir of rustExtensionDirs()) connectors.push(rustEntryFor(dir))
 
 // Templates ride the same document because the app fetches one file: a second
 // URL would be a second thing to be stale, offline, or half-published.
 const templates = readTemplateFiles().map((file) => catalogEntry(file.document))
 
 const catalog = JSON.stringify({ version: CATALOG_VERSION, connectors, templates }, null, 2) + '\n'
-const summary = `${connectors.length} connector(s), ${templates.length} template(s)`
+const summary = `${dirs.length} connector(s), ${connectors.length - dirs.length} Rust extension(s), ${templates.length} template(s)`
 
 if (process.argv.includes('--check')) {
   const current = existsSync('catalog.json') ? readFileSync('catalog.json', 'utf8') : ''
