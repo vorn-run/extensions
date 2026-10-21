@@ -1,7 +1,7 @@
 id = "postgres"
 name = "PostgreSQL"
 version = "0.1.2"
-api = "vorn:extension@0.9"
+api = "vorn:extension@1.0"
 publisher = "Vorn"
 description = "Trigger workflows from new rows in a PostgreSQL database, and query or write to it from a step."
 

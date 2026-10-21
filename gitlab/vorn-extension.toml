@@ -1,7 +1,7 @@
 id = "gitlab"
 name = "GitLab"
 version = "0.1.2"
-api = "vorn:extension@0.9"
+api = "vorn:extension@1.0"
 publisher = "Vorn"
 description = "Trigger workflows from GitLab issues, merge requests and pipeline results, and create or comment on issues and merge requests from a step."
 
