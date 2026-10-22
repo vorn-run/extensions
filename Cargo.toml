@@ -2,7 +2,17 @@
 # The connectors beside them are a Yarn workspace of their own.
 [workspace]
 resolver = "2"
-members = ["worktrees", "adapters", "tools/pack"]
+members = [
+    "worktrees",
+    "files",
+    "blocks",
+    "widget",
+    "browser",
+    "device",
+    "ssh",
+    "adapters",
+    "tools/pack",
+]
 
 [workspace.package]
 edition = "2021"
