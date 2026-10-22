@@ -1418,13 +1418,11 @@ dependencies = [
 name = "vorn-ext-tasks"
 version = "1.0.0"
 dependencies = [
- "futures-util",
  "serde",
  "serde_json",
  "tempfile",
  "uuid",
  "vorn-extension-sdk",
- "vorn-mcp",
  "vorn-store",
 ]
 
@@ -1490,17 +1488,6 @@ dependencies = [
  "rusqlite",
  "serde_json",
  "tracing",
-]
-
-[[package]]
-name = "vorn-mcp"
-version = "0.0.0"
-source = "git+https://github.com/vorn-run/vorn?rev=9aaa550753bfb72efeb225a95d45de48735a9412#9aaa550753bfb72efeb225a95d45de48735a9412"
-dependencies = [
- "futures-util",
- "regex",
- "serde_json",
- "uuid",
 ]
 
 [[package]]

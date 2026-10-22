@@ -4,13 +4,11 @@
 //! schemas before they get here. Reads go to the core's task list a page at
 //! a time, or to the one task by id; writes to the extension's own methods.
 
+use crate::js;
+use crate::toolkit::{answered, failed, items, object, pretty, text, Args, Outcome};
+use crate::Tasks;
 use serde_json::{json, Value};
 use vorn_extension_sdk::Host;
-use vorn_mcp::json;
-use vorn_mcp::rpc::RpcError;
-use vorn_mcp::toolkit::{failed, items, object, pretty, text, Args, Outcome};
-
-use crate::Tasks;
 
 /// How many tasks one read of the list takes.
 const PAGE: u64 = 1000;
@@ -34,12 +32,12 @@ impl Cx<'_> {
     /// A call as a client makes one; a failure reads as the server's answer would.
     fn call(&mut self, method: &str, params: Option<Value>) -> Result<Value, String> {
         let params = params.unwrap_or(Value::Null);
-        let answered = if method.starts_with("task:") && method != "task:get" {
+        let result = if method.starts_with("task:") && method != "task:get" {
             self.tasks.answer(self.host, method, &params)
         } else {
             self.host.call(api_name(method), params)
         };
-        answered.map_err(|e| RpcError::answered(&e.message).into())
+        result.map_err(|e| answered(&e.message))
     }
 }
 
@@ -99,7 +97,7 @@ fn agents_off(cx: &mut Cx<'_>, agents: &[&str]) -> Option<Value> {
 /// when `ok` is false because the row it names is not there.
 fn write(cx: &mut Cx<'_>, method: &str, params: Value) -> Result<Option<Value>, String> {
     let answer = cx.call(method, Some(params))?;
-    Ok(json::truthy(answer.get("ok")).then_some(answer))
+    Ok(answer.get("ok").is_some_and(js::truthy).then_some(answer))
 }
 
 /// The task `id`, with its description, or `None`.
@@ -148,7 +146,7 @@ fn in_workspace(project: &Value, workspace: &str) -> bool {
 fn list_tasks(cx: &mut Cx<'_>, args: &Args) -> Outcome {
     let mut tasks = tasks(cx, args.str("project_name"), args.str("status"))?;
     if !args.truthy("include_archived") {
-        tasks.retain(|t| !json::truthy(t.get("archivedAt")));
+        tasks.retain(|t| !t.get("archivedAt").is_some_and(js::truthy));
     }
     if let Some(workspace) = args.nonempty("workspace_id") {
         let projects = cx.call("project.list", None)?;
@@ -161,7 +159,7 @@ fn list_tasks(cx: &mut Cx<'_>, args: &Args) -> Outcome {
         tasks.retain(|t| {
             names
                 .iter()
-                .any(|n| json::strict_equals(Some(n), t.get("projectName")))
+                .any(|n| js::strict_equals(Some(n), t.get("projectName")))
         });
     }
     if let Some(agent) = args.nonempty("assigned_agent") {
@@ -262,7 +260,7 @@ fn delete_task(cx: &mut Cx<'_>, args: &Args) -> Outcome {
     }
     Ok(text(format!(
         "Deleted task: {}",
-        json::display(task.get("title"))
+        js::display(task.get("title"))
     )))
 }
 
@@ -284,7 +282,7 @@ fn archive_task(cx: &mut Cx<'_>, args: &Args) -> Outcome {
     if !terminal(task.get("status")) {
         return Ok(failed(format!(
             "Error: only done or cancelled tasks can be archived (status: {})",
-            json::display(task.get("status"))
+            js::display(task.get("status"))
         )));
     }
     set_archived(cx, id, true)

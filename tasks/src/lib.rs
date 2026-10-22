@@ -25,6 +25,7 @@ pub mod js;
 pub mod nodes;
 pub mod pane;
 pub mod sources;
+pub mod toolkit;
 pub mod tools;
 pub mod triggers;
 mod view;
