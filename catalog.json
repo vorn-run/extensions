@@ -3151,7 +3151,7 @@
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "tasks",
       "packUrl": "https://github.com/vorn-run/extensions/releases/download/tasks-v1.0.0/vorn.tasks-1.0.0.vorn.tgz",
-      "sha256": "167066e9210fef96ce99fe6fe7405b0d4e4f10ffd15d49150572c8494da8c895",
+      "sha256": "71c39f21a20e132713f31ebbbc8913ea1381f11f31c50362590d9958215bc26f",
       "icon": {
         "paths": [
           "M3 4h5v5H3z",
