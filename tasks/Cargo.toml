@@ -1,0 +1,23 @@
+[package]
+name = "vorn-ext-tasks"
+version = "1.0.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "Tasks: the board's writes, its images and triggers, connector imports, the MCP task tools, the card badge, the board's tree and the pane beside a card"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+vorn-extension-sdk.workspace = true
+# A task's id, as the board has always made them.
+uuid = { version = "1", features = ["v4"] }
+
+[dev-dependencies]
+# Its writes checked against Vorn's own tables and the guard extension statements run under.
+vorn-store.workspace = true
+tempfile = "3"
