@@ -10,6 +10,8 @@ members = [
     "browser",
     "device",
     "ssh",
+    "tasks",
+    "workflows",
     "adapters",
     "tools/pack",
 ]
@@ -27,8 +29,10 @@ vorn-agents = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72
 vorn-analysis = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72efeb225a95d45de48735a9412" }
 vorn-extensions = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72efeb225a95d45de48735a9412" }
 vorn-hooks = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72efeb225a95d45de48735a9412" }
+vorn-mcp = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72efeb225a95d45de48735a9412" }
 vorn-recovery = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72efeb225a95d45de48735a9412" }
 vorn-screen = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72efeb225a95d45de48735a9412" }
+vorn-store = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72efeb225a95d45de48735a9412" }
 vorn-term-proto = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72efeb225a95d45de48735a9412" }
 
 # How every component here is built, as Vorn built them: the artifact's checksum depends on it.
