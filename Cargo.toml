@@ -2,7 +2,19 @@
 # The connectors beside them are a Yarn workspace of their own.
 [workspace]
 resolver = "2"
-members = ["worktrees", "adapters", "tools/pack"]
+members = [
+    "worktrees",
+    "files",
+    "blocks",
+    "widget",
+    "browser",
+    "device",
+    "ssh",
+    "tasks",
+    "workflows",
+    "adapters",
+    "tools/pack",
+]
 
 [workspace.package]
 edition = "2021"
@@ -19,6 +31,7 @@ vorn-extensions = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753b
 vorn-hooks = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72efeb225a95d45de48735a9412" }
 vorn-recovery = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72efeb225a95d45de48735a9412" }
 vorn-screen = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72efeb225a95d45de48735a9412" }
+vorn-store = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72efeb225a95d45de48735a9412" }
 vorn-term-proto = { git = "https://github.com/vorn-run/vorn", rev = "9aaa550753bfb72efeb225a95d45de48735a9412" }
 
 # How every component here is built, as Vorn built them: the artifact's checksum depends on it.

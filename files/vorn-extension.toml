@@ -1,0 +1,27 @@
+id = "vorn.files"
+name = "Files"
+version = "1.0.0"
+api = "vorn:extension@1.0"
+publisher = "Vorn"
+description = "A session's files beside its terminal: the folder as a tree, files opened in tabs, edited, found in and saved, and popped out into cards of their own."
+
+[icon]
+view_box = "0 0 24 24"
+paths = ["M3 6a2 2 0 0 1 2-2h4.5l2 2H19a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"]
+
+[declares]
+uses = ["files.read", "files.write", "sessions.read", "storage"]
+
+[service]
+component = "files.wasm"
+
+[[contributes.panes]]
+id = "files"
+title = "Files"
+tree = true
+
+[[contributes.cards]]
+id = "file"
+title = "File"
+tree = true
+rows = "cards"

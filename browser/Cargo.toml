@@ -1,0 +1,19 @@
+[package]
+name = "vorn-ext-browser"
+version = "1.0.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "The Browser: web pages in tabs beside a session's terminal, opened from its card or by its agent, which reads them and acts on them"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+vorn-extension-sdk.workspace = true
+serde = { version = "1", features = ["derive"] }
+url = "2"
+
+[dev-dependencies]
+serde_json = "1"

@@ -3047,6 +3047,163 @@
       }
     },
     {
+      "id": "vorn.blocks",
+      "name": "Shell blocks",
+      "description": "A shell's finished commands as blocks with their status and time, the command running now, and the composer's history and completions.",
+      "kind": "extension",
+      "version": "1.0.0",
+      "capabilities": [],
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "blocks",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/blocks-v1.0.0/vorn.blocks-1.0.0.vorn.tgz",
+      "sha256": "2c84b8617c3b68c61323c8c8415235442b2fed1ffaac422719f656a6aca61856",
+      "icon": {
+        "paths": [
+          "M3 4h18v4H3z",
+          "M3 10h18v4H3z",
+          "M3 16h11v4H3z"
+        ],
+        "viewBox": "0 0 24 24"
+      }
+    },
+    {
+      "id": "vorn.browser",
+      "name": "Browser",
+      "description": "Web pages in tabs beside a session's terminal, opened from its card or by its agent, which reads them, finds in them and acts on them with its browser tools.",
+      "kind": "extension",
+      "version": "1.0.0",
+      "capabilities": [],
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "browser",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/browser-v1.0.0/vorn.browser-1.0.0.vorn.tgz",
+      "sha256": "db37b82a6d3c248aec3eca265fd8693447972f6e2c26f1a34e40cb6750d39ce0",
+      "icon": {
+        "paths": [
+          "M12 2a10 10 0 1 0 0 20a10 10 0 1 0 0-20zM12 4a8 8 0 1 1 0 16a8 8 0 1 1 0-16z",
+          "M11 3h2v18h-2z",
+          "M3 11h18v2H3z"
+        ],
+        "viewBox": "0 0 24 24"
+      }
+    },
+    {
+      "id": "vorn.device",
+      "name": "Device",
+      "description": "An iOS simulator beside a session's terminal, chosen from its card or claimed by its agent, which launches, installs and opens its apps and reads its screen with its device tools.",
+      "kind": "extension",
+      "version": "1.0.0",
+      "capabilities": [],
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "device",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/device-v1.0.0/vorn.device-1.0.0.vorn.tgz",
+      "sha256": "cce89f0d58d7a9fe6a4c1fd8179e4f66bdb66a77a5fedfe7520e8b08890bd512",
+      "icon": {
+        "paths": [
+          "M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM7 5v13h10V5z"
+        ],
+        "viewBox": "0 0 24 24"
+      }
+    },
+    {
+      "id": "vorn.files",
+      "name": "Files",
+      "description": "A session's files beside its terminal: the folder as a tree, files opened in tabs, edited, found in and saved, and popped out into cards of their own.",
+      "kind": "extension",
+      "version": "1.0.0",
+      "capabilities": [],
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "files",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/files-v1.0.0/vorn.files-1.0.0.vorn.tgz",
+      "sha256": "f791789e03964f1a808815e3eacc250e882835361ee5fc0c32ba2a55f37e4793",
+      "icon": {
+        "paths": [
+          "M3 6a2 2 0 0 1 2-2h4.5l2 2H19a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+        ],
+        "viewBox": "0 0 24 24"
+      }
+    },
+    {
+      "id": "vorn.ssh",
+      "name": "SSH",
+      "description": "Remote hosts to run sessions on over SSH, and the SSH keys they log in with: the SSH & Hosts settings page, the host choice when adding a project, and testing a host.",
+      "kind": "extension",
+      "version": "1.0.0",
+      "capabilities": [],
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "ssh",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/ssh-v1.0.0/vorn.ssh-1.0.0.vorn.tgz",
+      "sha256": "01bdb2a6f24c7b9f00821f38638bbd1eadb5ddd35d36bbcfbeecf9d791cab312",
+      "icon": {
+        "paths": [
+          "M3.6 6.4L5 5l7 7l-7 7l-1.4-1.4L9.2 12z",
+          "M12 17h9v2h-9z"
+        ],
+        "viewBox": "0 0 24 24"
+      }
+    },
+    {
+      "id": "vorn.tasks",
+      "name": "Tasks",
+      "description": "The task board: each project's tasks moved across statuses by you, your agents and your workflows, their images, the task a session works on shown on its card, a pane beside a card listing its project's tasks, and the MCP task tools.",
+      "kind": "extension",
+      "version": "1.0.0",
+      "capabilities": [],
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "tasks",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/tasks-v1.0.0/vorn.tasks-1.0.0.vorn.tgz",
+      "sha256": "71c39f21a20e132713f31ebbbc8913ea1381f11f31c50362590d9958215bc26f",
+      "icon": {
+        "paths": [
+          "M3 4h5v5H3z",
+          "M10 5.5h11v2H10z",
+          "M3 15h5v5H3z",
+          "M10 16.5h11v2H10z"
+        ],
+        "viewBox": "0 0 24 24"
+      }
+    },
+    {
+      "id": "vorn.widget",
+      "name": "Widget",
+      "description": "A small window over the others: every agent's status, and Allow or Deny for the tools they ask to use.",
+      "kind": "extension",
+      "version": "1.0.0",
+      "capabilities": [],
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "widget",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/widget-v1.0.0/vorn.widget-1.0.0.vorn.tgz",
+      "sha256": "c4ed5da9c9d36287cf9ac052f92d879b028aba711bf7b810b39695cd1c739204",
+      "icon": {
+        "paths": [
+          "M3 4h12v2H3z",
+          "M3 8h8v2H3z",
+          "M3 12h6v2H3z",
+          "M13 12h8v8h-8z"
+        ],
+        "viewBox": "0 0 24 24"
+      }
+    },
+    {
+      "id": "vorn.workflows",
+      "name": "Workflows",
+      "description": "Workflows: the view with their runs and the editor, where each step is a card on a canvas; the steps and triggers they are built from (agents, scripts and HTTP requests; manual runs, schedules, webhooks and a session coming back); Run workflow in the grid's, a card's and a terminal's menus; and approval gates waiting for you beside agents asking.",
+      "kind": "extension",
+      "version": "1.0.0",
+      "capabilities": [],
+      "git": "https://github.com/vorn-run/extensions.git",
+      "path": "workflows",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/workflows-v1.0.0/vorn.workflows-1.0.0.vorn.tgz",
+      "sha256": "1b2aa5c71b766cd3e1ab81e0b23b5fc345706b4f8f0e7d1410ec048148f9ae08",
+      "icon": {
+        "paths": [
+          "M3 3h7v7H3z",
+          "M14 14h7v7h-7z",
+          "M5.5 10h2v4.5H14v2H5.5z"
+        ],
+        "viewBox": "0 0 24 24"
+      }
+    },
+    {
       "id": "vorn.worktrees",
       "name": "Worktree cleanup",
       "description": "Offers to remove a worktree once its last session ends, and lists every worktree with what removing it frees.",

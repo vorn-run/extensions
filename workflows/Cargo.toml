@@ -1,0 +1,14 @@
+[package]
+name = "vorn-ext-workflows"
+version = "1.0.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "Workflows: the Workflows view's tree, Run workflow in the menus, and the approval gates waiting for a person; its steps and triggers run in Vorn's engine"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+vorn-extension-sdk.workspace = true

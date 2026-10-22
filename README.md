@@ -5,9 +5,11 @@ a folder of its own at the top of this repository. Vorn installs one from its
 folder: `vorn ext install https://github.com/vorn-run/extensions.git`, with the
 folder's name as the path, which is what the catalog names for each.
 
-Vorn's own extensions written in Rust live here too: Worktree cleanup
-(`worktrees/`, a Wasm component) and the agent adapters (`adapters/<agent>/`,
-one manifest with an `[agent]` section per agent CLI). Each is released on its
+Vorn's own extensions written in Rust live here too: the Wasm components
+Worktree cleanup (`worktrees/`), Files (`files/`), Shell blocks (`blocks/`),
+the Widget (`widget/`), the Browser (`browser/`), the Device (`device/`),
+SSH (`ssh/`), Tasks (`tasks/`) and Workflows (`workflows/`), and the agent adapters (`adapters/<agent>/`, one manifest with
+an `[agent]` section per agent CLI). Each is released on its
 own as a pack, `<id>-<version>.vorn.tgz` with its sha256; Vorn's installer
 ships a pinned set of these so a first launch works offline, and installs and
 updates them like any other extension.
