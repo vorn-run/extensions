@@ -1,0 +1,32 @@
+# Adapted from a published capture of cursor-agent 2026.06.26's screen, narrowed to 80 columns.
+status = "waiting"
+screen = '''
+
+  Cursor Agent
+  v2026.06.26-7079533
+  Tip: Try Composer via /model, frontier intelligence at a fraction of the cost.
+
+
+  Run the shell command: echo hello
+
+
+  $ echo hello Waiting for approval...
+
+────────────────────────────────────────────────────────────────────────────────
+ $  echo hello in .
+
+ Run this command?
+ Not in allowlist: echo
+  → Run (once) (y)
+    Add Shell(echo) to allowlist? (tab)
+    Run Everything (shift+tab)
+    Skip (esc or n)
+
+
+
+
+
+
+
+
+'''

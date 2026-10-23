@@ -1,0 +1,66 @@
+# Cursor's CLI agent, run from its adapter, written from Cursor's CLI docs and published captures of its screen.
+id = "vorn.agents.cursor"
+name = "Cursor CLI"
+version = "1.0.0"
+api = "vorn:extension@1.0"
+description = "Runs Cursor's CLI agent: launches and resumes it, runs it headless and reads its status."
+publisher = "Vorn"
+
+[icon]
+view_box = "0 0 24 24"
+paths = ["M12 2l9 5v10l-9 5-9-5V7zm0 2.3L5 8.2v7.6l7 3.9 7-3.9V8.2z"]
+
+[agent]
+id = "cursor"
+name = "Cursor CLI"
+label = "Cursor"
+short_name = "Cursor"
+description = "Cursor CLI agent"
+icon = "icon.svg"
+mark = "⬡"
+color = "#d4d4d4"
+tint = "#d4d4d420"
+url = "https://cursor.com/docs/cli/overview"
+install = "curl https://cursor.com/install -fsS | bash"
+
+# The install's unambiguous name; its newer one, `agent`, can be set as the command instead.
+[agent.launch]
+command = "cursor-agent"
+headless_args = ["--force", "--trust", "--approve-mcps"]
+
+# It mints its own chat ids and takes none at launch, so there is nothing to pin.
+[agent.resume]
+args = ["--resume", "{id}"]
+selectors = { with_value = ["--resume"], bare = ["--continue"] }
+
+# Print mode, its answer as plain text; the prompt goes to stdin.
+[agent.headless]
+prompt = ["-p"]
+no_prompt = ["-p", ""]
+resume = ["--resume", "{id}"]
+
+[agent.models]
+
+[agent.mcp]
+commands = ["cursor-agent mcp enable vorn"]
+note = 'Run it once ~/.cursor/mcp.json has "vorn": { "command": "npx", "args": ["-y", "@vornrun/mcp@latest"] } under "mcpServers".'
+
+# A command off the allowlist, or the workspace trust box on first launch.
+[[agent.status]]
+status = "waiting"
+any = [
+  '^\s*Run this command\?\s*$',
+  '^\s*Skip \(esc or n\)\s*$',
+  'Workspace Trust Required',
+  '\[a\] Trust this workspace',
+]
+
+# A turn in progress: the prompt box offers to stop it.
+[[agent.status]]
+status = "working"
+any = ['^\s*→ .*\bctrl\+c to stop\s*$']
+
+# The prompt box, nothing running.
+[[agent.status]]
+status = "idle"
+all = ['^\s*▄{20,}\s*$', '^\s*→ ', '^\s*▀{20,}\s*$']

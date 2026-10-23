@@ -1,0 +1,23 @@
+# Adapted from a published capture of cursor-agent 2026.06.26's screen, narrowed to 80 columns.
+status = "idle"
+screen = '''
+
+  Cursor Agent
+  v2026.06.26-7079533
+  Tip: Try Composer via /model, frontier intelligence at a fraction of the cost.
+
+
+ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+  → Plan, search, build anything
+ ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+  Composer 2.5 Fast
+  ~/src/app · main
+
+
+
+
+
+
+
+
+'''
