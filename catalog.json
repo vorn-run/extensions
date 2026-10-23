@@ -3146,12 +3146,12 @@
       "name": "Tasks",
       "description": "The task board: each project's tasks moved across statuses by you, your agents and your workflows, their images, the task a session works on shown on its card, a pane beside a card listing its project's tasks, and the MCP task tools.",
       "kind": "extension",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "capabilities": [],
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "tasks",
-      "packUrl": "https://github.com/vorn-run/extensions/releases/download/tasks-v1.0.0/vorn.tasks-1.0.0.vorn.tgz",
-      "sha256": "71c39f21a20e132713f31ebbbc8913ea1381f11f31c50362590d9958215bc26f",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/tasks-v1.1.0/vorn.tasks-1.1.0.vorn.tgz",
+      "sha256": "a7d371c1cf3f52ecb6f51268b08ed2908228a902db52296110a47501d01c640d",
       "icon": {
         "paths": [
           "M3 4h5v5H3z",
