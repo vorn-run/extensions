@@ -1,26 +1,21 @@
-# Adapted from a published capture of cursor-agent 2026.06.26's screen, narrowed to 80 columns.
+# A Cursor CLI screen, laid out from cursor-agent 2026.10.22's own text at 80 columns.
 status = "working"
 screen = '''
 
   Cursor Agent
-  v2026.06.26-7079533
-  Tip: Try Composer via /model, frontier intelligence at a fraction of the cost.
+  v2026.10.22-27dcf5f
 
 
-  Run the shell command: echo hello
+  List the files in this folder
 
+  $ ls 4ms
 
-  $ echo hello 0ms
-
- ⠀⠞ Running  22 tokens
- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
-  → Add a follow-up                                              ctrl+c to stop
- ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-  1 task
-  Composer 2.5 Fast
+ ⠋ Thinking
+ ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+  → Add a follow-up                                               ctrl+c to stop
+ ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+  Auto
   ~/src/app · main
-
-
 
 
 

@@ -34,20 +34,20 @@ fn configured(args: &[&str]) -> AgentCommand {
 #[test]
 fn cursor_launches_with_its_prompt_and_resumes_a_chat_by_id() {
     let mut req = LaunchRequest::new(cursor());
-    assert_eq!(line(&req, None), "cursor-agent");
+    assert_eq!(line(&req, None), "cursor-agent --model auto");
     req.initial_prompt = Some("plan it".into());
-    assert_eq!(line(&req, None), "cursor-agent 'plan it'");
+    assert_eq!(line(&req, None), "cursor-agent --model auto 'plan it'");
     let mut resumed = LaunchRequest::new(cursor());
     resumed.resume_session_id = Some(CHAT.into());
     assert_eq!(
         line(&resumed, None),
-        format!("cursor-agent --resume {CHAT}")
+        format!("cursor-agent --model auto --resume {CHAT}")
     );
     // It mints its own chat ids, so a fresh session is not pinned to one.
     assert!(!cursor().pins_session_ids());
     let mut fresh = LaunchRequest::new(cursor());
     fresh.session_id = Some(CHAT.into());
-    assert_eq!(line(&fresh, None), "cursor-agent");
+    assert_eq!(line(&fresh, None), "cursor-agent --model auto");
 }
 
 #[test]
@@ -72,14 +72,14 @@ fn cursor_resume_replaces_a_chat_the_configured_line_picks() {
 }
 
 #[test]
-fn cursor_takes_its_model_with_the_model_flag() {
+fn cursor_takes_its_model_with_the_model_flag_in_place_of_auto() {
     let mut req = LaunchRequest::new(cursor());
-    req.model = Some("gpt-5".into());
-    assert_eq!(line(&req, None), "cursor-agent --model gpt-5");
+    req.model = Some("composer-2.5".into());
+    assert_eq!(line(&req, None), "cursor-agent --model composer-2.5");
     let set = configured(&["--model", "auto", "--sandbox", "enabled"]);
     assert_eq!(
         line(&req, Some(&set)),
-        "cursor-agent --sandbox enabled --model gpt-5"
+        "cursor-agent --sandbox enabled --model composer-2.5"
     );
 }
 
@@ -89,7 +89,17 @@ fn cursor_runs_headless_in_print_mode_with_the_prompt_on_stdin() {
     req.initial_prompt = Some("fix the tests".into());
     let run = launch::headless_spawn(&req, None, &[], &POSIX).unwrap();
     assert!(run.command.ends_with("cursor-agent"), "{}", run.command);
-    assert_eq!(run.args, ["--force", "--trust", "--approve-mcps", "-p"]);
+    assert_eq!(
+        run.args,
+        [
+            "--force",
+            "--trust",
+            "--approve-mcps",
+            "--model",
+            "auto",
+            "-p"
+        ]
+    );
     assert_eq!(run.stdin.as_deref(), Some("fix the tests"));
 
     req.resume_session_id = Some(CHAT.into());
@@ -100,17 +110,26 @@ fn cursor_runs_headless_in_print_mode_with_the_prompt_on_stdin() {
             "--force",
             "--trust",
             "--approve-mcps",
+            "--model",
+            "auto",
             "--resume",
             CHAT,
             "-p"
         ]
     );
 
-    // With no prompt it is given an empty one, so it does not wait on stdin.
+    // With no prompt it reads an empty stdin and stops with an error, as Cursor needs one.
     let bare = launch::headless_spawn(&LaunchRequest::new(cursor()), None, &[], &POSIX).unwrap();
     assert_eq!(
         bare.args,
-        ["--force", "--trust", "--approve-mcps", "-p", ""]
+        [
+            "--force",
+            "--trust",
+            "--approve-mcps",
+            "--model",
+            "auto",
+            "-p"
+        ]
     );
     assert_eq!(bare.stdin, None);
     assert!(!cursor().spec().headless.as_ref().unwrap().stream);

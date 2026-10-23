@@ -1,4 +1,4 @@
-# Cursor's CLI agent, run from its adapter, written from Cursor's CLI docs and published captures of its screen.
+# Cursor's CLI agent, run from its adapter, written from Cursor's CLI docs and its 2026.10.22 help and screens.
 id = "vorn.agents.cursor"
 name = "Cursor CLI"
 version = "1.0.0"
@@ -24,19 +24,21 @@ url = "https://cursor.com/docs/cli/overview"
 install = "curl https://cursor.com/install -fsS | bash"
 
 # The install's unambiguous name; its newer one, `agent`, can be set as the command instead.
+# Auto by default: Cursor's docs name no Grok model id, and a chosen model replaces it.
 [agent.launch]
 command = "cursor-agent"
-headless_args = ["--force", "--trust", "--approve-mcps"]
+args = ["--model", "auto"]
+headless_args = ["--force", "--trust", "--approve-mcps", "--model", "auto"]
 
 # It mints its own chat ids and takes none at launch, so there is nothing to pin.
 [agent.resume]
 args = ["--resume", "{id}"]
 selectors = { with_value = ["--resume"], bare = ["--continue"] }
 
-# Print mode, its answer as plain text; the prompt goes to stdin.
+# Print mode, its answer as plain text; with no prompt words it reads stdin, and an empty one fails.
 [agent.headless]
 prompt = ["-p"]
-no_prompt = ["-p", ""]
+no_prompt = ["-p"]
 resume = ["--resume", "{id}"]
 
 [agent.models]
@@ -45,17 +47,20 @@ resume = ["--resume", "{id}"]
 commands = ["cursor-agent mcp enable vorn"]
 note = 'Run it once ~/.cursor/mcp.json has "vorn": { "command": "npx", "args": ["-y", "@vornrun/mcp@latest"] } under "mcpServers".'
 
-# A command off the allowlist, or the workspace trust box on first launch.
+# An approval card, a question or mode switch in the prompt box, or the workspace trust box.
 [[agent.status]]
 status = "waiting"
 any = [
-  '^\s*Run this command\?\s*$',
-  '^\s*Skip \(esc or n\)\s*$',
+  '^\s*(Run this command( outside the sandbox)?|Run this MCP tool|Write to this file|Delete this file|Read this file|Proceed with this edit|Allow this web (search|fetch))\?\s*$',
+  '\(esc or n( or p)?\)\s*$',
+  'Waiting for decision \(y/n/p\)',
+  'Approve mode switch \(y/n\)',
+  'Answer questions \(Enter to select/next, Esc to skip\)',
   'Workspace Trust Required',
-  '\[a\] Trust this workspace',
+  'Do you trust the contents of this directory\?',
 ]
 
-# A turn in progress: the prompt box offers to stop it.
+# A turn in progress: the empty prompt box offers to stop it.
 [[agent.status]]
 status = "working"
 any = ['^\s*→ .*\bctrl\+c to stop\s*$']

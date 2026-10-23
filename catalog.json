@@ -2999,7 +2999,7 @@
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "adapters/cursor",
       "packUrl": "https://github.com/vorn-run/extensions/releases/download/adapters-cursor-v1.0.0/vorn.agents.cursor-1.0.0.vorn.tgz",
-      "sha256": "39f36bb6cb81c60a3d59f710248bfaf20a18bcfff43fb6b36713e41b03cb5c7e",
+      "sha256": "8995d991bb3aa6b95fce425adae71419cc7146c9bd439625c2a61247394b5dec",
       "icon": {
         "paths": [
           "M12 2l9 5v10l-9 5-9-5V7zm0 2.3L5 8.2v7.6l7 3.9 7-3.9V8.2z"

@@ -1,4 +1,4 @@
-# Adapted from a published capture of cursor-agent 2026.06.26's screen, narrowed to 80 columns.
+# A Cursor CLI screen, laid out from cursor-agent 2026.10.22's own text at 80 columns.
 status = "waiting"
 screen = '''
 
@@ -12,15 +12,10 @@ screen = '''
   │                                                                            │
   │    /home/me/src/app                                                        │
   │                                                                            │
-  │                                                                            │
   │  ▶ [a] Trust this workspace                                                │
   │    [q] Quit                                                                │
   │                                                                            │
-  │  Use arrow keys to navigate, Enter to select, or press the key shown       │
-  │                                                                            │
   ╰────────────────────────────────────────────────────────────────────────────╯
-
-
 
 
 
