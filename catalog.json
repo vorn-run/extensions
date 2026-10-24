@@ -3056,7 +3056,7 @@
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "blocks",
       "packUrl": "https://github.com/vorn-run/extensions/releases/download/blocks-v1.1.0/vorn.blocks-1.1.0.vorn.tgz",
-      "sha256": "2d37cadb7eabddeb6170116b422d925641170d577ca22d3b3fc8686f1fafd3ae",
+      "sha256": "477b04242b07559b4a2e315035a62dd9f019a2d46fd64a56d99397451c2e3de5",
       "icon": {
         "paths": [
           "M3 4h18v4H3z",
@@ -3193,7 +3193,7 @@
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "workflows",
       "packUrl": "https://github.com/vorn-run/extensions/releases/download/workflows-v1.1.0/vorn.workflows-1.1.0.vorn.tgz",
-      "sha256": "297e52fc41ce781211b53afb876254464abec462b06436b77470d86a0a04f5a0",
+      "sha256": "bc2a94cf558a3617334b48242dee60920a9f065c790f6b3d9942c5484a348e4a",
       "icon": {
         "paths": [
           "M3 3h7v7H3z",
