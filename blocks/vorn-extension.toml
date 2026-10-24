@@ -3,7 +3,7 @@ name = "Shell blocks"
 version = "1.1.0"
 api = "vorn:extension@1.0"
 publisher = "Vorn"
-description = "A shell's finished commands as blocks with their status and time, the command running now, and the composer's history and completions."
+description = "Draw each finished command as its own block with a copy button, and give the composer your history and completions."
 
 [icon]
 view_box = "0 0 24 24"

@@ -3049,14 +3049,14 @@
     {
       "id": "vorn.blocks",
       "name": "Shell blocks",
-      "description": "A shell's finished commands as blocks with their status and time, the command running now, and the composer's history and completions.",
+      "description": "Draw each finished command as its own block with a copy button, and give the composer your history and completions.",
       "kind": "extension",
       "version": "1.1.0",
       "capabilities": [],
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "blocks",
       "packUrl": "https://github.com/vorn-run/extensions/releases/download/blocks-v1.1.0/vorn.blocks-1.1.0.vorn.tgz",
-      "sha256": "6356b60e4f44ef54bd26d2a650daa206905da3c784bc7dbee71b39c43fd95d5d",
+      "sha256": "2d37cadb7eabddeb6170116b422d925641170d577ca22d3b3fc8686f1fafd3ae",
       "icon": {
         "paths": [
           "M3 4h18v4H3z",
