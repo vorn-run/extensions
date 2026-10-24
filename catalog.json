@@ -3188,12 +3188,12 @@
       "name": "Workflows",
       "description": "Workflows: the view with their runs and the editor, where each step is a card on a canvas; the steps and triggers they are built from (agents, scripts and HTTP requests; manual runs, schedules, webhooks and a session coming back); Run workflow in the grid's, a card's and a terminal's menus; and approval gates waiting for you beside agents asking.",
       "kind": "extension",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "capabilities": [],
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "workflows",
-      "packUrl": "https://github.com/vorn-run/extensions/releases/download/workflows-v1.1.0/vorn.workflows-1.1.0.vorn.tgz",
-      "sha256": "bc2a94cf558a3617334b48242dee60920a9f065c790f6b3d9942c5484a348e4a",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/workflows-v1.2.0/vorn.workflows-1.2.0.vorn.tgz",
+      "sha256": "a5848b3f135873de6f1b1ea5cc1d905e7ec7a1a13c86abbda98a75c5db54f023",
       "icon": {
         "paths": [
           "M3 3h7v7H3z",
