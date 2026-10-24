@@ -1374,7 +1374,7 @@ dependencies = [
 
 [[package]]
 name = "vorn-ext-blocks"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "serde",
  "vorn-extension-sdk",
@@ -1435,7 +1435,7 @@ dependencies = [
 
 [[package]]
 name = "vorn-ext-workflows"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [
  "vorn-extension-sdk",
 ]
