@@ -3051,12 +3051,12 @@
       "name": "Shell blocks",
       "description": "A shell's finished commands as blocks with their status and time, the command running now, and the composer's history and completions.",
       "kind": "extension",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "capabilities": [],
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "blocks",
-      "packUrl": "https://github.com/vorn-run/extensions/releases/download/blocks-v1.0.0/vorn.blocks-1.0.0.vorn.tgz",
-      "sha256": "2c84b8617c3b68c61323c8c8415235442b2fed1ffaac422719f656a6aca61856",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/blocks-v1.1.0/vorn.blocks-1.1.0.vorn.tgz",
+      "sha256": "6356b60e4f44ef54bd26d2a650daa206905da3c784bc7dbee71b39c43fd95d5d",
       "icon": {
         "paths": [
           "M3 4h18v4H3z",
@@ -3188,12 +3188,12 @@
       "name": "Workflows",
       "description": "Workflows: the view with their runs and the editor, where each step is a card on a canvas; the steps and triggers they are built from (agents, scripts and HTTP requests; manual runs, schedules, webhooks and a session coming back); Run workflow in the grid's, a card's and a terminal's menus; and approval gates waiting for you beside agents asking.",
       "kind": "extension",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "capabilities": [],
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "workflows",
-      "packUrl": "https://github.com/vorn-run/extensions/releases/download/workflows-v1.0.0/vorn.workflows-1.0.0.vorn.tgz",
-      "sha256": "1b2aa5c71b766cd3e1ab81e0b23b5fc345706b4f8f0e7d1410ec048148f9ae08",
+      "packUrl": "https://github.com/vorn-run/extensions/releases/download/workflows-v1.1.0/vorn.workflows-1.1.0.vorn.tgz",
+      "sha256": "297e52fc41ce781211b53afb876254464abec462b06436b77470d86a0a04f5a0",
       "icon": {
         "paths": [
           "M3 3h7v7H3z",
