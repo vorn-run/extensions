@@ -3193,7 +3193,7 @@
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "workflows",
       "packUrl": "https://github.com/vorn-run/extensions/releases/download/workflows-v1.2.0/vorn.workflows-1.2.0.vorn.tgz",
-      "sha256": "a5848b3f135873de6f1b1ea5cc1d905e7ec7a1a13c86abbda98a75c5db54f023",
+      "sha256": "bfafbdb7056e52ebe13d30020b5c88dfd0a5199eacbc77359edfa1c2fb41d21b",
       "icon": {
         "paths": [
           "M3 3h7v7H3z",
