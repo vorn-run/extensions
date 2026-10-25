@@ -30,14 +30,14 @@ button = { setting = ["top_bar"] }
 [[contributes.preferences]]
 id = "top_bar"
 title = "Show in the top bar"
-description = "Shows the Workflows button in the top bar. Off, Workflows still opens from its key and the command palette."
+description = "Hides only the button; Workflows still opens from its shortcut"
 type = "bool"
 default = true
 
 [[contributes.preferences]]
 id = "headlessStepTimeoutMinutes"
 title = "Step time limit"
-description = "Stop a workflow step that runs longer than this."
+description = "Stops any workflow step that runs longer than this"
 type = "choice"
 options = [{ id = "m15", title = "15 min" }, { id = "m30", title = "30 min" }, { id = "m60", title = "1 hour" }, { id = "m120", title = "2 hours" }, { id = "m360", title = "6 hours" }, { id = "m0", title = "No limit" }]
 default = "m60"
@@ -45,14 +45,14 @@ default = "m60"
 [[contributes.preferences]]
 id = "showHeadlessAgents"
 title = "Show background agents"
-description = "Show agents that workflows run in the background, above the session grid."
+description = "Shows agents that workflows start, above the session grid"
 type = "bool"
 default = true
 
 [[contributes.preferences]]
 id = "headlessRetentionMinutes"
 title = "Keep finished agents for"
-description = "How long a finished background agent stays in that list."
+description = "Removes a finished background agent from that list after this long"
 type = "choice"
 options = [{ id = "m1", title = "1 min" }, { id = "m5", title = "5 min" }, { id = "m15", title = "15 min" }, { id = "m30", title = "30 min" }, { id = "m60", title = "1 hour" }]
 default = "m1"
@@ -60,13 +60,12 @@ default = "m1"
 [[contributes.notifications]]
 id = "approval"
 title = "Notify when a run needs approval"
-description = "A workflow reached a step that waits for you."
 default = true
 
 [[contributes.notifications]]
 id = "finished"
 title = "Notify when a run finishes"
-description = "A workflow run ended, whether it passed or failed."
+description = "Includes failed runs as well as passed ones"
 default = true
 
 [[contributes.menus]]

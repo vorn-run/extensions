@@ -35,14 +35,14 @@ tree = true
 [[contributes.preferences]]
 id = "top_bar"
 title = "Show in the top bar"
-description = "Shows the Tasks button in the top bar. Off, Tasks still opens from its key, the command palette and a card's pane menu."
+description = "Hides only the button; Tasks still opens from its shortcut"
 type = "bool"
 default = true
 
 [[contributes.preferences]]
 id = "default_view"
 title = "Default view"
-description = "How Tasks opens: a list of each status's tasks, or a board with a column per status."
+description = "Picks what Tasks opens to; Board shows a column per status"
 type = "choice"
 options = [{ id = "list", title = "List" }, { id = "board", title = "Board" }]
 default = "list"

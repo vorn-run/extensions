@@ -24,6 +24,6 @@ tree = true
 [[contributes.preferences]]
 id = "minimalShellPrompt"
 title = "Minimal prompt"
-description = "Hide your shell's own prompt, since each block already shows the folder and command."
+description = "Hides your shell's prompt; each block already shows folder and command"
 type = "bool"
 default = true
