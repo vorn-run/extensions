@@ -49,6 +49,9 @@ const PACK_URL = (dir, id, version) =>
  */
 const RUST_TAG = (dir, version) => `${dir.replace('/', '-')}-v${version}`
 
+/** Where the app fetches a screenshot a manifest names by its path in the folder. */
+const RAW_URL = (dir, file) => `https://raw.githubusercontent.com/vorn-run/extensions/main/${dir}/${file}`
+
 /** Trim an action's inputs down to what someone deciding would want to see. */
 function summarize(entries) {
   return entries.map((entry) => ({
@@ -119,6 +122,8 @@ async function entryFor(dir) {
     packageName: pkg.name,
     version: pkg.version,
     capabilities,
+    // Derived, as Vorn derives it from a manifest: one that triggers or acts is a connection.
+    tags: capabilities.length > 0 ? ['connection'] : [],
     ...(listing.category && { category: listing.category }),
     ...(listing.keywords && { keywords: listing.keywords }),
     ...(listing.auth && { auth: listing.auth }),
@@ -167,7 +172,17 @@ function rustEntryFor(dir) {
     path: dir,
     packUrl: `https://github.com/vorn-run/extensions/releases/download/${RUST_TAG(dir, version)}/${id}-${version}.vorn.tgz`,
     sha256: pack.sha256,
-    ...(pack.icon && { icon: pack.icon })
+    ...(pack.icon && { icon: pack.icon }),
+    // What its page shows, as `tools/pack` read it from the manifest.
+    tags: pack.tags ?? [],
+    ...(pack.publisher && { publisher: pack.publisher }),
+    ...(pack.logo && { logo: pack.logo }),
+    ...(pack.logoDark && { logoDark: pack.logoDark }),
+    ...(pack.homepage && { homepage: pack.homepage }),
+    ...(pack.whatsNew && { whatsNew: pack.whatsNew }),
+    ...(pack.screenshots && {
+      screenshots: pack.screenshots.map((s) => (s.startsWith('https://') ? s : RAW_URL(dir, s)))
+    })
   }
 }
 

@@ -25,6 +25,8 @@ const NOT_PACKED: [&str; 9] = [
 ];
 /// A folder whose subfolders are extensions of their own.
 const GROUPS: [&str; 1] = ["adapters"];
+/// The largest logo the catalog carries inline, as Vorn caps it.
+const MAX_LOGO_BYTES: usize = 64 * 1024;
 
 /// What the packer reads of a manifest.
 #[derive(Debug, Deserialize)]
@@ -35,15 +37,39 @@ pub struct Manifest {
     #[serde(default)]
     description: String,
     #[serde(default)]
+    publisher: Option<String>,
+    #[serde(default)]
+    homepage: Option<String>,
+    #[serde(default)]
+    whats_new: Option<String>,
+    #[serde(default)]
+    screenshots: Vec<String>,
+    #[serde(default)]
     icon: Option<Icon>,
     #[serde(default)]
     service: Option<Service>,
+    #[serde(default)]
+    agent: Option<toml::Table>,
+    #[serde(default)]
+    theme: Option<toml::Table>,
+    #[serde(default)]
+    connector: Option<toml::Table>,
+    #[serde(default)]
+    contributes: Option<toml::Table>,
+    #[serde(default)]
+    mcp: toml::Table,
 }
 
 #[derive(Debug, Deserialize)]
 struct Icon {
-    view_box: String,
+    #[serde(default)]
+    view_box: Option<String>,
+    #[serde(default)]
     paths: Vec<String>,
+    #[serde(default)]
+    file: Option<String>,
+    #[serde(default)]
+    dark: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -74,20 +100,87 @@ impl Manifest {
         self.service.as_ref()?.component.as_deref()
     }
 
+    /// What it adds, as Vorn derives it from a manifest: never declared, so
+    /// a listing cannot claim what its package does not do.
+    fn tags(&self) -> Vec<&'static str> {
+        let listed = |key: &str| {
+            self.contributes
+                .as_ref()
+                .and_then(|c| c.get(key))
+                .and_then(toml::Value::as_array)
+                .is_some_and(|a| !a.is_empty())
+        };
+        [
+            ("agent", self.agent.is_some()),
+            ("connection", self.connector.is_some()),
+            ("pane", listed("panes")),
+            ("steps", listed("nodes")),
+            ("theme", self.theme.is_some()),
+            ("tools", !self.mcp.is_empty()),
+        ]
+        .into_iter()
+        .filter_map(|(tag, on)| on.then_some(tag))
+        .collect()
+    }
+
+    /// The logo file, light and dark: `[icon] file`, else the agent's `[agent] icon`.
+    fn logo_files(&self) -> (Option<&str>, Option<&str>) {
+        let icon = self.icon.as_ref();
+        let agent = self
+            .agent
+            .as_ref()
+            .and_then(|a| a.get("icon"))
+            .and_then(toml::Value::as_str);
+        let light = icon.and_then(|i| i.file.as_deref()).or(agent);
+        (light, icon.and_then(|i| i.dark.as_deref()))
+    }
+
     /// What the catalog lists of this pack, as JSON; `build-catalog.mjs` reads it.
-    fn listing(&self, sha256: &str) -> String {
+    fn listing(&self, dir: &Path, sha256: &str) -> Result<String, String> {
         let mut listing = serde_json::json!({
             "id": self.id,
             "name": self.name,
             "description": self.description,
             "version": self.version,
             "sha256": sha256,
+            "tags": self.tags(),
         });
-        if let Some(icon) = &self.icon {
+        if let Some(icon) = self.icon.as_ref().filter(|i| !i.paths.is_empty()) {
             listing["icon"] = serde_json::json!({ "viewBox": icon.view_box, "paths": icon.paths });
         }
-        format!("{listing:#}\n")
+        let (light, dark) = self.logo_files();
+        for (key, file) in [("logo", light), ("logoDark", dark)] {
+            if let Some(file) = file {
+                listing[key] = serde_json::json!(read_logo(&dir.join(file))?);
+            }
+        }
+        let text = |v: &Option<String>| v.as_deref().filter(|s| !s.is_empty()).map(str::to_owned);
+        for (key, value) in [
+            ("publisher", text(&self.publisher)),
+            ("homepage", text(&self.homepage)),
+            ("whatsNew", text(&self.whats_new)),
+        ] {
+            if let Some(value) = value {
+                listing[key] = serde_json::json!(value);
+            }
+        }
+        if !self.screenshots.is_empty() {
+            listing["screenshots"] = serde_json::json!(self.screenshots);
+        }
+        Ok(format!("{listing:#}\n"))
     }
+}
+
+/// A logo SVG, small enough for the catalog to carry inline.
+fn read_logo(path: &Path) -> Result<String, String> {
+    let svg = fs::read_to_string(path).map_err(|e| format!("{}: {e}", path.display()))?;
+    if svg.len() > MAX_LOGO_BYTES || !svg.contains("<svg") {
+        return Err(format!(
+            "{} is not an SVG of at most {MAX_LOGO_BYTES} bytes",
+            path.display()
+        ));
+    }
+    Ok(svg)
 }
 
 /// A pack written, and its checksum.
@@ -164,7 +257,7 @@ pub fn build_and_pack(root: &Path, folder: &Path, out: &Path) -> Result<Packed, 
     fs::write(&sum, format!("{sha256}  {name}\n"))
         .map_err(|e| format!("{}: {e}", sum.display()))?;
     let listing = out.join(format!("{top}.vorn.json"));
-    fs::write(&listing, manifest.listing(&sha256))
+    fs::write(&listing, manifest.listing(&dir, &sha256)?)
         .map_err(|e| format!("{}: {e}", listing.display()))?;
     Ok(Packed { file, sha256 })
 }
@@ -327,6 +420,28 @@ mod tests {
         let files = files_of(&repo_root().join("adapters/claude")).unwrap();
         let names: Vec<&str> = files.keys().map(String::as_str).collect();
         assert_eq!(names, ["icon.svg", "vorn-extension.toml"]);
+    }
+
+    #[test]
+    fn a_listing_carries_derived_tags_its_logo_and_showcase() {
+        let dir = repo_root().join("adapters/claude");
+        let listing = Manifest::read(&dir).unwrap().listing(&dir, "00").unwrap();
+        let listing: serde_json::Value = serde_json::from_str(&listing).unwrap();
+        assert_eq!(listing["tags"], serde_json::json!(["agent"]));
+        assert_eq!(listing["publisher"], "Vorn");
+        assert!(listing["logo"].as_str().unwrap().contains("<svg"));
+        assert!(listing.get("logoDark").is_none());
+    }
+
+    #[test]
+    fn tags_come_from_what_a_manifest_adds() {
+        let manifest: Manifest = toml::from_str(
+            "id = \"a.b\"\nversion = \"1.0.0\"\nname = \"A\"\n\
+             [theme]\nname = \"Dusk\"\n[mcp.x]\ncommand = [\"x\"]\n\
+             [contributes]\nnodes = []\n[[contributes.panes]]\nid = \"p\"\n",
+        )
+        .unwrap();
+        assert_eq!(manifest.tags(), ["pane", "theme", "tools"]);
     }
 
     #[test]
