@@ -1,6 +1,6 @@
 id = "vorn.tasks"
 name = "Tasks"
-version = "1.0.0"
+version = "1.1.0"
 api = "vorn:extension@1.0"
 publisher = "Vorn"
 description = "The task board: each project's tasks moved across statuses by you, your agents and your workflows, their images, the task a session works on shown on its card, a pane beside a card listing its project's tasks, and the MCP task tools."
@@ -35,9 +35,17 @@ tree = true
 [[contributes.preferences]]
 id = "top_bar"
 title = "Show in the top bar"
-description = "Shows the Tasks button in the top bar. Off, Tasks still opens from its key, the command palette and a card's pane menu."
+description = "Hides only the button; Tasks still opens from its shortcut"
 type = "bool"
 default = true
+
+[[contributes.preferences]]
+id = "default_view"
+title = "Default view"
+description = "Picks what Tasks opens to; Board shows a column per status"
+type = "choice"
+options = [{ id = "list", title = "List" }, { id = "board", title = "Board" }]
+default = "list"
 
 [[contributes.badges]]
 id = "task"

@@ -3,7 +3,8 @@
 //! menus (`[[contributes.menus]]` listing the workflows each offers), and
 //! the approval gates waiting for a person (`[[contributes.attention]]`),
 //! which the waiting pill counts and the approve and deny keys answer
-//! beside agents asking.
+//! beside agents asking. It notifies when a run needs approval or a sign-in
+//! (`approval`) and when one ends (`finished`).
 //!
 //! Vorn ships it as a Wasm component. The rows it publishes follow the
 //! workflows (`workflow.changed`) and their runs' gates (`workflow.gates`);
@@ -34,6 +35,58 @@ pub fn contextual(nodes: &Value) -> bool {
                 .and_then(|c| c.get("contextual"))
                 .and_then(Value::as_bool)
                 == Some(true)
+    })
+}
+
+/// The notices for a step waiting for a person: a gate or a sign-in.
+pub const APPROVAL: &str = "approval";
+/// The notices for a run that ended.
+pub const FINISHED: &str = "finished";
+
+/// Text at `key`, when there is some.
+fn said<'a>(v: &'a Value, key: &str) -> Option<&'a str> {
+    v.get(key).and_then(Value::as_str).filter(|s| !s.is_empty())
+}
+
+/// The notice for a gate of workflow `name` that just started asking.
+pub fn gate_notice(gate: &Value, name: &str) -> Value {
+    let workflow = Some(name).filter(|n| !n.is_empty()).unwrap_or("A workflow");
+    let body = said(gate, "message").map_or_else(
+        || {
+            let step = said(gate, "title").unwrap_or("Approval");
+            format!("{step} is waiting for your approval")
+        },
+        str::to_owned,
+    );
+    json!({ "kind": APPROVAL, "title": format!("{workflow} \u{b7} awaiting approval"), "body": body })
+}
+
+/// The notice for a step of workflow `name` waiting for a sign-in (`workflow.signIn`).
+pub fn sign_in_notice(e: &Value, name: &str) -> Value {
+    let workflow = Some(name).filter(|n| !n.is_empty()).unwrap_or("A workflow");
+    let body = said(e, "message").map_or_else(
+        || {
+            let step = said(e, "title").unwrap_or("A step");
+            format!("{step} is waiting for you to sign in again")
+        },
+        str::to_owned,
+    );
+    json!({ "kind": APPROVAL, "title": format!("{workflow} \u{b7} awaiting sign-in"), "body": body })
+}
+
+/// The notice for a run of workflow `name` that ended (`workflow.ended`).
+pub fn ended_notice(e: &Value, name: &str) -> Value {
+    let outcome = match said(e, "outcome") {
+        Some("completed") => "completed",
+        Some("rejected") => "was rejected",
+        _ => "failed",
+    };
+    let steps = e.get("steps").and_then(Value::as_u64).unwrap_or(0);
+    let plural = if steps == 1 { "" } else { "s" };
+    json!({
+        "kind": FINISHED,
+        "title": "Vorn",
+        "body": format!("Workflow \"{name}\" {outcome} \u{2014} {steps} step{plural}"),
     })
 }
 
@@ -69,6 +122,22 @@ impl Editor {
         Ok(())
     }
 
+    /// The name of workflow `id`: what the event says, else what the workflows list holds.
+    fn name_of(host: &mut dyn Host, said_name: Option<&str>, id: Option<&str>) -> String {
+        if let Some(name) = said_name.filter(|n| !n.is_empty()) {
+            return name.to_owned();
+        }
+        let listed = host.call("workflow.list", Value::Null).unwrap_or_default();
+        listed
+            .as_array()
+            .into_iter()
+            .flatten()
+            .find(|w| w.get("id").and_then(Value::as_str) == id)
+            .and_then(|w| w.get("name").and_then(Value::as_str))
+            .unwrap_or_default()
+            .to_owned()
+    }
+
     /// Every gate asking now, published whole.
     fn all_gates(host: &mut dyn Host) -> Result<(), Error> {
         let rows = host.call("workflow.gates", Value::Null)?;
@@ -98,9 +167,35 @@ impl Editor {
             .filter(|id| !ids.contains(id))
             .map(|id| Op::Delete(id.to_owned()))
             .collect();
+        let asked: Vec<Value> = gates
+            .iter()
+            .filter(|g| {
+                let id = g.get("id").and_then(Value::as_str);
+                !shown
+                    .iter()
+                    .any(|r| r.get("id").and_then(Value::as_str) == id)
+            })
+            .cloned()
+            .collect();
         ops.extend(gates.iter().cloned().map(Op::Upsert));
         if !ops.is_empty() {
             host.publish(GATES, ops);
+        }
+        for gate in asked {
+            let name = Editor::name_of(host, said(&gate, "subtitle"), said(&gate, "workflow"));
+            Editor::notify(host, gate_notice(&gate, &name));
+        }
+    }
+
+    /// Sends `notice`; one switched off or refused is not an error to the run.
+    fn notify(host: &mut dyn Host, notice: Value) {
+        if let Err(e) = host.call("notifications.send", notice) {
+            if e.code != "off" {
+                host.log(
+                    vorn_extension_sdk::Level::Warn,
+                    &format!("could not send a notification: {e}"),
+                );
+            }
         }
     }
 
@@ -175,6 +270,21 @@ impl Extension for Editor {
                 .unwrap_or_default();
             let gates = e.data["gates"].as_array().cloned().unwrap_or_default();
             Editor::gates(host, run, &gates);
+        }
+        for e in &batch {
+            match e.name.as_str() {
+                "workflow.signIn" | "workflow.ended" => {
+                    let id = said(&e.data, "workflowId");
+                    let name = Editor::name_of(host, said(&e.data, "workflow"), id);
+                    let notice = if e.name == "workflow.ended" {
+                        ended_notice(&e.data, &name)
+                    } else {
+                        sign_in_notice(&e.data, &name)
+                    };
+                    Editor::notify(host, notice);
+                }
+                _ => {}
+            }
         }
     }
 
@@ -259,6 +369,56 @@ mod tests {
             json!({ "workflowId": "a", "inputs": { "k": 1 } })
         );
         assert_eq!(call(&mut h, "move", json!({})).unwrap(), Value::Null);
+    }
+
+    #[test]
+    fn notifies_a_gate_once_as_it_starts_asking_a_sign_in_and_an_end() {
+        let sent = std::sync::Arc::new(std::sync::Mutex::new(Vec::<Value>::new()));
+        let log = sent.clone();
+        let mut h = host().answer("notifications.send", move |a| {
+            log.lock().unwrap().push(a.clone());
+            Ok(Value::Null)
+        });
+        call(&mut h, "refresh", Value::Null).unwrap();
+        let mut e = Editor;
+        let asking = json!({ "id": "r2|x", "run": "r2", "node": "x", "workflow": "a",
+                             "title": "Check", "subtitle": "", "message": "" });
+        let told = |name: &str, data: Value| Event {
+            name: name.into(),
+            data,
+        };
+        let gates = json!({ "runId": "r2", "gates": [asking] });
+        e.on_events(&mut h, vec![told("workflow.gates", gates.clone())]);
+        e.on_events(&mut h, vec![told("workflow.gates", gates)]);
+        e.on_events(
+            &mut h,
+            vec![
+                told(
+                    "workflow.signIn",
+                    json!({ "workflow": "Ship", "title": "Deploy", "message": null }),
+                ),
+                told(
+                    "workflow.ended",
+                    json!({ "workflowId": "b", "workflow": "", "outcome": "rejected", "steps": 1 }),
+                ),
+            ],
+        );
+        assert_eq!(
+            *sent.lock().unwrap(),
+            [
+                json!({ "kind": "approval", "title": "A \u{b7} awaiting approval",
+                        "body": "Check is waiting for your approval" }),
+                json!({ "kind": "approval", "title": "Ship \u{b7} awaiting sign-in",
+                        "body": "Deploy is waiting for you to sign in again" }),
+                json!({ "kind": "finished", "title": "Vorn",
+                        "body": "Workflow \"B\" was rejected \u{2014} 1 step" }),
+            ]
+        );
+        let done = ended_notice(&json!({ "outcome": "completed", "steps": 2 }), "Tell me");
+        assert_eq!(
+            done["body"],
+            "Workflow \"Tell me\" completed \u{2014} 2 steps"
+        );
     }
 
     #[test]

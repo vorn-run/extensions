@@ -1,6 +1,6 @@
 id = "vorn.workflows"
 name = "Workflows"
-version = "1.0.0"
+version = "1.2.0"
 api = "vorn:extension@1.0"
 publisher = "Vorn"
 description = "Workflows: the view with their runs and the editor, where each step is a card on a canvas; the steps and triggers they are built from (agents, scripts and HTTP requests; manual runs, schedules, webhooks and a session coming back); Run workflow in the grid's, a card's and a terminal's menus; and approval gates waiting for you beside agents asking."
@@ -10,13 +10,13 @@ view_box = "0 0 24 24"
 paths = ["M3 3h7v7H3z", "M14 14h7v7h-7z", "M5.5 10h2v4.5H14v2H5.5z"]
 
 [declares]
-uses = ["tasks.read", "tasks.write", "sessions.read", "sessions.launch", "workflows.read", "workflows.write", "process.run"]
+uses = ["tasks.read", "tasks.write", "sessions.read", "sessions.launch", "workflows.read", "workflows.write", "process.run", "notifications.send"]
 
 [service]
 component = "workflows.wasm"
 # Publishes the view's rows and the gates waiting as Vorn starts.
 start = "refresh"
-events = ["workflow.changed", "workflow.gates"]
+events = ["workflow.changed", "workflow.gates", "workflow.signIn", "workflow.ended"]
 
 [[contributes.views]]
 id = "workflows"
@@ -30,8 +30,42 @@ button = { setting = ["top_bar"] }
 [[contributes.preferences]]
 id = "top_bar"
 title = "Show in the top bar"
-description = "Shows the Workflows button in the top bar. Off, Workflows still opens from its key and the command palette."
+description = "Hides only the button; Workflows still opens from its shortcut"
 type = "bool"
+default = true
+
+[[contributes.preferences]]
+id = "headlessStepTimeoutMinutes"
+title = "Step time limit"
+description = "Stops any workflow step that runs longer than this"
+type = "choice"
+options = [{ id = "m15", title = "15 min" }, { id = "m30", title = "30 min" }, { id = "m60", title = "1 hour" }, { id = "m120", title = "2 hours" }, { id = "m360", title = "6 hours" }, { id = "m0", title = "No limit" }]
+default = "m60"
+
+[[contributes.preferences]]
+id = "showHeadlessAgents"
+title = "Show background agents"
+description = "Shows agents that workflows start, above the session grid"
+type = "bool"
+default = true
+
+[[contributes.preferences]]
+id = "headlessRetentionMinutes"
+title = "Keep finished agents for"
+description = "Removes a finished background agent from that list after this long"
+type = "choice"
+options = [{ id = "m1", title = "1 min" }, { id = "m5", title = "5 min" }, { id = "m15", title = "15 min" }, { id = "m30", title = "30 min" }, { id = "m60", title = "1 hour" }]
+default = "m1"
+
+[[contributes.notifications]]
+id = "approval"
+title = "Notify when a run needs approval"
+default = true
+
+[[contributes.notifications]]
+id = "finished"
+title = "Notify when a run finishes"
+description = "Includes failed runs as well as passed ones"
 default = true
 
 [[contributes.menus]]
