@@ -19,7 +19,7 @@ jobs:
     outputs:
       kind: ${{ steps.kind.outputs.kind }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - id: kind
         env:
           TAG: ${{ github.ref_name }}
@@ -39,7 +39,7 @@ jobs:
     if: needs.resolve.outputs.kind == 'rust'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: mlugg/setup-zig@v2
         with:
           version: 0.16.0
@@ -106,8 +106,8 @@ jobs:
     if: needs.resolve.outputs.kind == 'npm'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
