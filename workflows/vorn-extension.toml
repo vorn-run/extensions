@@ -1,6 +1,6 @@
 id = "vorn.workflows"
 name = "Workflows"
-version = "1.2.0"
+version = "1.3.0"
 api = "vorn:extension@1.0"
 publisher = "Vorn"
 description = "Workflows: the view with their runs and the editor, where each step is a card on a canvas; the steps and triggers they are built from (agents, scripts and HTTP requests; manual runs, schedules, webhooks and a session coming back); Run workflow in the grid's, a card's and a terminal's menus; and approval gates waiting for you beside agents asking."
@@ -18,7 +18,7 @@ component = "workflows.wasm"
 start = "refresh"
 events = ["workflow.changed", "workflow.gates", "workflow.signIn", "workflow.ended"]
 
-[[contributes.views]]
+[[contributes.pages]]
 id = "workflows"
 title = "Workflows"
 description = "Workflows, their runs, and the editor where each step is a card on a canvas."
