@@ -13,7 +13,7 @@ paths = ["M3 4h5v16H3z", "M10 4h5v11h-5z", "M17 4h4v7h-4z"]
 [[contributes.views]]
 id = "kanban"
 title = "Kanban"
-description = "Columns by status: running sessions small, the rest one line each"
+description = "Columns by status: done and idle sessions one line each, the rest small"
 icon = "columns-3"
 columns = "status"
 card = "mini"

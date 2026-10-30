@@ -3132,7 +3132,7 @@
       "git": "https://github.com/vorn-run/extensions.git",
       "path": "kanban",
       "packUrl": "https://github.com/vorn-run/extensions/releases/download/kanban-v0.1.0/kanban-0.1.0.vorn.tgz",
-      "sha256": "c7275e6e7d52533f1830a58ba7f1bce5b68f5cd5927e74a6e31fd722d49ae2a0",
+      "sha256": "7795f92e92db5690e60c581016baef759742f211c03ed6447d6feb29b4e0ccde",
       "icon": {
         "paths": [
           "M3 4h5v16H3z",
