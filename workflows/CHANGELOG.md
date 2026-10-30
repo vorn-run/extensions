@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.0
+
+- Opens Workflows from the top bar as a page.
+
 ## 1.2.0
 
 - Sends its notifications through Vorn: when a run needs approval or a sign-in, and when a run finishes. Each kind has its own switch on its page.
