@@ -1,6 +1,6 @@
 id = "vorn.tasks"
 name = "Tasks"
-version = "1.1.0"
+version = "1.2.0"
 api = "vorn:extension@1.0"
 publisher = "Vorn"
 description = "The task board: each project's tasks moved across statuses by you, your agents and your workflows, their images, the task a session works on shown on its card, a pane beside a card listing its project's tasks, and the MCP task tools."
@@ -18,7 +18,7 @@ component = "tasks.wasm"
 start = "badges"
 events = ["agent.conversation"]
 
-[[contributes.views]]
+[[contributes.pages]]
 id = "board"
 title = "Tasks"
 description = "The board of each project's tasks: a queue of todos for you and your agents."
